@@ -74,7 +74,7 @@ Save the result as a `.json` file in `sources/` and run the generator.
   "questions": [
     {
       "num": 1,
-      "text": "What does git init do?",
+      "text": "What does `git init` do?",
       "code": "",
       "source": "basics",
       "label": "Basics · 1 / 4",

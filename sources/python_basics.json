@@ -1,0 +1,203 @@
+{
+  "title": "Python Basics",
+  "random": 5,
+  "exam_count": 10,
+  "exam_minutes": 20,
+  "questions": [
+    {
+      "num": 1,
+      "text": "What is the correct way to create a variable in Python?",
+      "code": "",
+      "source": "basics",
+      "label": "Basics · 1 / 5",
+      "answers": [
+        "int x = 5",
+        "x = 5",
+        "var x = 5",
+        "declare x = 5"
+      ],
+      "correct": [
+        2
+      ]
+    },
+    {
+      "num": 2,
+      "text": "Which of the following are valid variable names in Python?",
+      "code": "",
+      "source": "basics",
+      "label": "Basics · 2 / 5",
+      "answers": [
+        "my_var",
+        "2fast",
+        "_hidden",
+        "class",
+        "firstName"
+      ],
+      "correct": [
+        1,
+        3,
+        5
+      ]
+    },
+    {
+      "num": 3,
+      "text": "What will the following `code` print?",
+      "code": "x = 10\nif x > 5:\n    print('big')\nelse:\n    print('small')",
+      "source": "basics",
+      "label": "Basics · 3 / 5",
+      "answers": [
+        "small",
+        "big",
+        "Nothing – syntax error",
+        "big small"
+      ],
+      "correct": [
+        2
+      ]
+    },
+    {
+      "num": 4,
+      "text": "What does the `//` operator do in Python?",
+      "code": "",
+      "source": "basics",
+      "label": "Basics · 4 / 5",
+      "answers": [
+        "Writes a comment",
+        "Floor division",
+        "Calculates the remainder",
+        "Regular division"
+      ],
+      "correct": [
+        2
+      ]
+    },
+    {
+      "num": 5,
+      "text": "What is the result of `10 % 3` in Python?",
+      "code": "",
+      "source": "basics",
+      "label": "Basics · 5 / 5",
+      "answers": [
+        "3",
+        "1",
+        "0",
+        "3.33"
+      ],
+      "correct": [
+        2
+      ]
+    },
+    {
+      "num": 6,
+      "text": "How do you write a `for` loop that iterates 5 times?",
+      "code": "",
+      "source": "control",
+      "label": "Control · 1 / 4",
+      "answers": [
+        "for i in range(5):",
+        "for(i=0; i<5; i++):",
+        "for (i in 5):",
+        "loop 5 times:"
+      ],
+      "correct": [
+        1
+      ]
+    },
+    {
+      "num": 7,
+      "text": "What does a `while` loop do?",
+      "code": "",
+      "source": "control",
+      "label": "Control · 2 / 4",
+      "answers": [
+        "Runs a fixed number of times",
+        "Repeats a block as long as a condition is True",
+        "Iterates over a list",
+        "Executes once after a condition is False"
+      ],
+      "correct": [
+        2
+      ]
+    },
+    {
+      "num": 8,
+      "text": "What keyword is used to exit a loop early?",
+      "code": "",
+      "source": "control",
+      "label": "Control · 3 / 4",
+      "answers": [
+        "exit",
+        "stop",
+        "break",
+        "end"
+      ],
+      "correct": [
+        3
+      ]
+    },
+    {
+      "num": 9,
+      "text": "What does the `continue` keyword do inside a loop?",
+      "code": "",
+      "source": "control",
+      "label": "Control · 4 / 4",
+      "answers": [
+        "Exits the loop immediately",
+        "Skips the rest of the current iteration",
+        "Pauses for one cycle",
+        "Restarts the loop"
+      ],
+      "correct": [
+        2
+      ]
+    },
+    {
+      "num": 10,
+      "text": "What is the difference between a list and a tuple?",
+      "code": "",
+      "source": "datatypes",
+      "label": "Datatypes · 1 / 3",
+      "answers": [
+        "Lists are ordered, tuples are not",
+        "Lists are mutable, tuples are immutable",
+        "Tuples hold more items",
+        "Lists use () and tuples use []"
+      ],
+      "correct": [
+        2
+      ]
+    },
+    {
+      "num": 11,
+      "text": "How do you access the first element of a list called `items`?",
+      "code": "",
+      "source": "datatypes",
+      "label": "Datatypes · 2 / 3",
+      "answers": [
+        "items.first()",
+        "items[1]",
+        "items[0]",
+        "items.get(0)"
+      ],
+      "correct": [
+        3
+      ]
+    },
+    {
+      "num": 12,
+      "text": "What does `my_list.append(4)` do?",
+      "code": "my_list = [1, 2, 3]\nmy_list.append(4)",
+      "source": "datatypes",
+      "label": "Datatypes · 3 / 3",
+      "answers": [
+        "Creates a new list with 4 appended",
+        "Adds 4 to the end of my_list",
+        "Inserts 4 at position 0",
+        "Raises an error"
+      ],
+      "correct": [
+        2
+      ]
+    }
+  ]
+}

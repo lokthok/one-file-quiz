@@ -727,6 +727,7 @@ function restart() {
   } else {
     stopTimer();
   }
+  updateProgress();
   renderQuestion();
 }
 
@@ -1105,7 +1106,8 @@ function renderIndex(list) {
   const numWidth = (digits * 0.55 + 0.2) + 'rem';
 
   container.innerHTML = list.map(q => {
-    let text = q.text;
+    let text = q.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    text = text.replace(/`([^`]+)`/g, '<code style="font-family:var(--mono);font-size:0.85em;background:rgba(0,180,216,0.1);color:var(--accent);padding:0.1em 0.3em;border-radius:3px;">$1</code>');
     if (search) {
       const re = new RegExp('(' + search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
       text = text.replace(re, '<span class=\"index-highlight\">$1</span>');
@@ -1131,21 +1133,27 @@ function jumpToQuestion(num) {
   const q = ALL_QUESTIONS.find(x => x.num === num);
   if (!q) return;
   mode = 'all';
-  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector('.mode-btn').classList.add('active');
   queue = [...ALL_QUESTIONS];
   current = queue.findIndex(x => x.num === num);
   if (current < 0) current = 0;
   score = 0;
   wrongAnswered = [];
   checked = false;
-  indexOpen = true;
-  toggleIndex();
+
+  // close index manually without triggering restart()
+  indexOpen = false;
+  document.getElementById('btnIndex').classList.remove('active');
+  document.getElementById('screen-index').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'block';
+  document.getElementById('statsRow').style.display = '';
+  document.getElementById('progressWrap').style.display = '';
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+
   document.getElementById('statCorrect').textContent = '0';
   document.getElementById('statWrong').textContent = '0';
-  document.getElementById('statTotal').textContent = queue.length;
   document.getElementById('statCorrectPct').textContent = '';
   document.getElementById('statWrongPct').textContent = '';
+  document.getElementById('statTotal').textContent = queue.length;
   renderQuestion();
 }
 

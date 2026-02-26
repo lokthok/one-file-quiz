@@ -966,7 +966,7 @@ function buildQueue() {
     });
     return weak.length > 0 ? shuffle(weak) : shuffle([...ALL_QUESTIONS]);
   }
-  // Quell-Filter
+  // Topic filter
   if (mode.startsWith('src_')) {
     const key = mode.slice(4);
     return shuffle(ALL_QUESTIONS.filter(q => q.topic === key));

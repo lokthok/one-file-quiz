@@ -5,65 +5,52 @@
   "exam_minutes": 15,
   "questions": [
     {
+      "topic": "basics",
       "text": "What does `git init` do?",
-      "code": "",
       "answers": [
         "Downloads a remote repository",
         "Initializes a new local Git repository",
         "Commits all staged changes",
         "Creates a new branch"
       ],
-      "correct": [
-        2
-      ],
-      "topic": "basics"
+      "correct": [2]
     },
     {
+      "topic": "basics",
       "text": "Which command stages all changes for the next commit?",
-      "code": "",
       "answers": [
         "git commit -a",
         "git stage .",
         "git add .",
         "git push"
       ],
-      "correct": [
-        3
-      ],
-      "topic": "basics"
+      "correct": [3]
     },
     {
+      "topic": "basics",
       "text": "What is the correct command to create and switch to a new branch?",
-      "code": "",
       "answers": [
         "git branch new-branch",
         "git checkout new-branch",
         "git checkout -b new-branch",
         "git switch --create new-branch"
       ],
-      "correct": [
-        3,
-        4
-      ],
-      "topic": "basics"
+      "correct": [3, 4]
     },
     {
+      "topic": "basics",
       "text": "What does `git stash` do?",
-      "code": "",
       "answers": [
         "Deletes uncommitted changes permanently",
         "Temporarily saves uncommitted changes",
         "Commits with a temp message",
         "Pushes changes to a stash remote"
       ],
-      "correct": [
-        2
-      ],
-      "topic": "basics"
+      "correct": [2]
     },
     {
+      "topic": "branching",
       "text": "Which of the following are valid git merge strategies?",
-      "code": "",
       "answers": [
         "fast-forward",
         "recursive",
@@ -71,68 +58,51 @@
         "rebase",
         "octopus"
       ],
-      "correct": [
-        1,
-        2,
-        5
-      ],
-      "topic": "branching"
+      "correct": [1, 2, 5]
     },
     {
+      "topic": "branching",
       "text": "What does a `detached HEAD` state mean?",
-      "code": "",
       "answers": [
         "The HEAD file is corrupted",
         "You are not on any branch but on a specific commit",
         "The latest commit has no message",
         "Your local branch is behind the remote"
       ],
-      "correct": [
-        2
-      ],
-      "topic": "branching"
+      "correct": [2]
     },
     {
+      "topic": "branching",
       "text": "What is the difference between `git merge` and `git rebase`?",
-      "code": "",
       "answers": [
         "They are identical",
         "Merge preserves history, rebase rewrites it onto another base",
         "Rebase only works on remote branches",
         "Merge always creates a merge commit"
       ],
-      "correct": [
-        2
-      ],
-      "topic": "branching"
+      "correct": [2]
     },
     {
+      "topic": "advanced",
       "text": "What does `git cherry-pick` do?",
-      "code": "",
       "answers": [
         "Applies a specific commit from another branch",
         "Removes a commit from history",
         "Moves all commits to a new branch",
         "Compares two commits"
       ],
-      "correct": [
-        1
-      ],
-      "topic": "advanced"
+      "correct": [1]
     },
     {
+      "topic": "advanced",
       "text": "What does `git bisect` help you do?",
-      "code": "",
       "answers": [
         "Merge two branches interactively",
         "Split a large commit into smaller ones",
         "Find the commit that introduced a bug",
         "Stash changes on multiple branches"
       ],
-      "correct": [
-        3
-      ],
-      "topic": "advanced"
+      "correct": [3]
     }
   ]
 }

@@ -26,10 +26,10 @@ A self-contained, single-file quiz tool. No backend, no dependencies, no install
 one-file-quiz/
 ├── template.html            # Quiz engine – do not edit
 ├── one_file_quiz.py         # Generator script
-├── sources/                  # Your question files go here
-│   ├── python_basics.json    # Demo
-│   └── git_basics.json       # Demo
-└── quizzes/                  # Generated quizzes land here
+├── sources/                 # Your question files go here
+│   ├── python-basics.json   # Demo
+│   └── git-basics.json      # Demo
+└── quizzes/                 # Generated quizzes land here
     ├── python-basics.html
     └── git-basics.html
 ```
@@ -46,7 +46,7 @@ cd one-file-quiz
 python3 one_file_quiz.py
 ```
 
-The script processes all JSON files in `sources/` automatically and writes the finished HTML files to `quizzes/`. Open any of them in a browser.
+The script lists all JSON files in `sources/`, asks you to pick one, and writes the finished HTML to `quizzes/`. Open it in any browser.
 
 ---
 
@@ -73,15 +73,15 @@ Save the result as a `.json` file in `sources/` and run the generator.
   "exam_minutes": 20,
   "questions": [
     {
-      "text": "What does `git init` do?",
       "topic": "basics",
+      "text": "What does `git init` do?",
       "answers": ["Downloads a repo", "Initializes a local Git repo", "Commits staged changes", "Creates a branch"],
       "correct": [2]
     },
     {
+      "topic": "basics",
       "text": "What will this print?",
       "code": "x = [1, 2, 3]\nprint(x[-1])",
-      "topic": "basics",
       "answers": ["1", "3", "IndexError", "-1"],
       "correct": [2]
     }
@@ -95,11 +95,11 @@ Save the result as a `.json` file in `sources/` and run the generator.
 | `random` | Number of questions in Random mode |
 | `exam_count` | Number of questions in Exam mode |
 | `exam_minutes` | Time limit for Exam mode |
-| `text` | The question text – wrap keywords in backticks for inline highlighting |
 | `topic` | Groups questions into topics (used for the Topics dropdown) |
+| `text` | The question text – wrap keywords in backticks for inline highlighting |
+| `code` | Optional code block, multiline via `\n` |
 | `answers` | Array of answer strings |
 | `correct` | 1-based indices of correct answers – supports multiple |
-| `code` | Optional code block, multiline via `\n` |
 
 ---
 

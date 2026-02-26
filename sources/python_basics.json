@@ -5,21 +5,19 @@
   "exam_minutes": 20,
   "questions": [
     {
-      "text": "What is the correct way to create a variable in Python?",
       "topic": "basics",
+      "text": "What is the correct way to create a variable in Python?",
       "answers": [
         "int x = 5",
         "x = 5",
         "var x = 5",
         "declare x = 5"
       ],
-      "correct": [
-        2
-      ]
+      "correct": [2]
     },
     {
-      "text": "Which of the following are valid variable names in Python?",
       "topic": "basics",
+      "text": "Which of the following are valid variable names in Python?",
       "answers": [
         "my_var",
         "2fast",
@@ -27,143 +25,119 @@
         "class",
         "firstName"
       ],
-      "correct": [
-        1,
-        3,
-        5
-      ]
+      "correct": [1, 3, 5]
     },
     {
+      "topic": "basics",
       "text": "What will the following `code` print?",
       "code": "x = 10\nif x > 5:\n    print('big')\nelse:\n    print('small')",
-      "topic": "basics",
       "answers": [
         "small",
         "big",
         "Nothing – syntax error",
         "big small"
       ],
-      "correct": [
-        2
-      ]
+      "correct": [2]
     },
     {
-      "text": "What does the `//` operator do in Python?",
       "topic": "basics",
+      "text": "What does the `//` operator do in Python?",
       "answers": [
         "Writes a comment",
         "Floor division",
         "Calculates the remainder",
         "Regular division"
       ],
-      "correct": [
-        2
-      ]
+      "correct": [2]
     },
     {
-      "text": "What is the result of `10 % 3` in Python?",
       "topic": "basics",
+      "text": "What is the result of `10 % 3` in Python?",
       "answers": [
         "3",
         "1",
         "0",
         "3.33"
       ],
-      "correct": [
-        2
-      ]
+      "correct": [2]
     },
     {
-      "text": "How do you write a `for` loop that iterates 5 times?",
       "topic": "control",
+      "text": "How do you write a `for` loop that iterates 5 times?",
       "answers": [
         "for i in range(5):",
         "for(i=0; i<5; i++):",
         "for (i in 5):",
         "loop 5 times:"
       ],
-      "correct": [
-        1
-      ]
+      "correct": [1]
     },
     {
-      "text": "What does a `while` loop do?",
       "topic": "control",
+      "text": "What does a `while` loop do?",
       "answers": [
         "Runs a fixed number of times",
         "Repeats a block as long as a condition is True",
         "Iterates over a list",
         "Executes once after a condition is False"
       ],
-      "correct": [
-        2
-      ]
+      "correct": [2]
     },
     {
-      "text": "What keyword is used to exit a loop early?",
       "topic": "control",
+      "text": "What keyword is used to exit a loop early?",
       "answers": [
         "exit",
         "stop",
         "break",
         "end"
       ],
-      "correct": [
-        3
-      ]
+      "correct": [3]
     },
     {
-      "text": "What does the `continue` keyword do inside a loop?",
       "topic": "control",
+      "text": "What does the `continue` keyword do inside a loop?",
       "answers": [
         "Exits the loop immediately",
         "Skips the rest of the current iteration",
         "Pauses for one cycle",
         "Restarts the loop"
       ],
-      "correct": [
-        2
-      ]
+      "correct": [2]
     },
     {
-      "text": "What is the difference between a list and a tuple?",
       "topic": "datatypes",
+      "text": "What is the difference between a list and a tuple?",
       "answers": [
         "Lists are ordered, tuples are not",
         "Lists are mutable, tuples are immutable",
         "Tuples hold more items",
         "Lists use () and tuples use []"
       ],
-      "correct": [
-        2
-      ]
+      "correct": [2]
     },
     {
-      "text": "How do you access the first element of a list called `items`?",
       "topic": "datatypes",
+      "text": "How do you access the first element of a list called `items`?",
       "answers": [
         "items.first()",
         "items[1]",
         "items[0]",
         "items.get(0)"
       ],
-      "correct": [
-        3
-      ]
+      "correct": [3]
     },
     {
+      "topic": "datatypes",
       "text": "What does `my_list.append(4)` do?",
       "code": "my_list = [1, 2, 3]\nmy_list.append(4)",
-      "topic": "datatypes",
       "answers": [
         "Creates a new list with 4 appended",
         "Adds 4 to the end of my_list",
         "Inserts 4 at position 0",
         "Raises an error"
       ],
-      "correct": [
-        2
-      ]
+      "correct": [2]
     }
   ]
 }

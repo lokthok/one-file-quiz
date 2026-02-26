@@ -13,17 +13,16 @@ JSON structure:
   "exam_minutes": 60,
   "questions": [
     {
+      "num": 1,
       "text": "Question text",
       "code": "optional code block\nmultiline supported",
-      "topic": "topic_key",
+      "source": "topic_key",
+      "label": "Topic · 1 / 5",
       "answers": ["Answer A", "Answer B", "Answer C", "Answer D"],
       "correct": [1]
     }
   ]
 }
-
-Note: num and label are auto-generated. topic replaces source.
-      code is optional. correct uses 1-based answer indices.
 """
 
 import json
@@ -31,6 +30,8 @@ import re
 import sys
 from datetime import date
 from pathlib import Path
+
+__version__ = "1.1.1"
 
 
 def separator(title=""):
@@ -193,7 +194,7 @@ def write_output(html, config, json_path):
 
 def main():
     print("\n┌─────────────────────────────────┐")
-    print("│     one-file-quiz generator     │")
+    print(f"│   one-file-quiz generator {__version__}   │")
     print("└─────────────────────────────────┘")
 
     files = find_all_json()

@@ -744,7 +744,7 @@ function buildQueue() {
     });
     return weak.length > 0 ? shuffle(weak) : shuffle([...ALL_QUESTIONS]);
   }
-  // Topic filter
+  // Quell-Filter
   if (mode.startsWith('src_')) {
     const key = mode.slice(4);
     return shuffle(ALL_QUESTIONS.filter(q => q.topic === key));
@@ -1237,7 +1237,7 @@ restart();
 <div style="width:100%;max-width:760px;margin-top:1.2rem;padding-top:0.8rem;border-top:1px solid var(--border);font-family:var(--mono);font-size: 0.75rem;color:var(--text-dim);line-height:2;display:flex;align-items:center;">
   <span>
     <a href="https://github.com/lokthok/one-file-quiz" target="_blank" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">one-file-quiz</a>
-    <span style="opacity:0.5;"> v1.0.0</span>
+    <span style="opacity:0.5;"> v1.1.1</span>
     <span style="opacity:0.3;"> ·</span>
     created by <a href="https://github.com/lokthok" target="_blank" style="color:var(--accent);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">lokthok</a>
     · built with Claude Sonnet 4.6

@@ -325,6 +325,39 @@
     flex-wrap: wrap;
   }
 
+  .hint-toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .hint-toggle-wrap input { display: none; }
+  .hint-track {
+    width: 2rem;
+    height: 1rem;
+    border-radius: 999px;
+    background: var(--border);
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .hint-thumb {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: var(--text-dim);
+    position: absolute;
+    top: 50%;
+    left: 0.18rem;
+    transform: translateY(-50%);
+    transition: left 0.2s, background 0.2s;
+  }
+  .hint-toggle-wrap input:checked ~ .hint-track { background: rgba(0,180,216,0.25); }
+  .hint-toggle-wrap input:checked ~ .hint-track .hint-thumb {
+    left: calc(100% - 0.83rem);
+    background: var(--accent);
+  }
   .topic-dropdown {
     position: relative;
     margin-left: auto;
@@ -557,8 +590,13 @@
     <button class="btn btn-primary" id="btnNext" onclick="nextQuestion()" style="display:none">Next →</button>
     <div class="feedback" id="feedback"></div>
   </div>
-  <div style="font-family:var(--mono);font-size: 0.75rem;color:var(--text-dim);margin-top:1.4rem;margin-bottom:0;letter-spacing:0.03em;text-align:center;">
-    <span style="color:var(--text)">1–5</span> select answer &nbsp;·&nbsp; <span style="color:var(--text)">Enter</span> Check / Next
+  <div style="font-family:var(--mono);font-size: 0.75rem;color:var(--text-dim);margin-top:1.4rem;margin-bottom:0;letter-spacing:0.03em;display:flex;align-items:center;justify-content:space-between;">
+    <span><span style="color:var(--text)">1–5</span> select answer &nbsp;·&nbsp; <span style="color:var(--text)">Enter</span> Check / Next</span>
+    <label class="hint-toggle-wrap">
+      <input type="checkbox" id="hintToggle" checked onchange="updateHintVisibility()">
+      <span class="hint-track"><span class="hint-thumb"></span></span>
+      <span>show hint</span>
+    </label>
   </div>
 </div>
 
@@ -602,6 +640,12 @@ const QUIZ_CONFIG = {
 
 const ALL_QUESTIONS = QUIZ_CONFIG.questions;
 
+function updateHintVisibility() {
+  const cb = document.getElementById('hintToggle');
+  const el = document.getElementById('qCorrectCount');
+  if (cb && el) el.style.visibility = cb.checked ? 'visible' : 'hidden';
+}
+
 // Header rendern
 function renderHeader() {
   const el = document.getElementById('quizHeader');
@@ -633,7 +677,7 @@ function renderModeButtons() {
     html += `<button class="mode-btn" id="btnTopics" onclick="toggleTopicDropdown(event)">Topics ▾</button>`;
     html += `<div class="topic-dropdown-menu" id="topicMenu">`;
     QUIZ_CONFIG.topics.forEach(s => {
-      const count = ALL_QUESTIONS.filter(q => q.source === s.key).length;
+      const count = ALL_QUESTIONS.filter(q => q.topic === s.key).length;
       html += `<div class="topic-dropdown-item" id="topic_${s.key}" onclick="setTopicMode('${s.key}')">${s.label}<span style="opacity:0.5;">${count}</span></div>`;
     });
     html += `</div></div>`;
@@ -700,10 +744,10 @@ function buildQueue() {
     });
     return weak.length > 0 ? shuffle(weak) : shuffle([...ALL_QUESTIONS]);
   }
-  // Quell-Filter
+  // Topic filter
   if (mode.startsWith('src_')) {
     const key = mode.slice(4);
-    return shuffle(ALL_QUESTIONS.filter(q => q.source === key));
+    return shuffle(ALL_QUESTIONS.filter(q => q.topic === key));
   }
   return shuffle([...ALL_QUESTIONS]);
 }
@@ -744,9 +788,9 @@ function renderQuestion() {
 
   document.getElementById('qNum').textContent = (current + 1) + ' / ' + queue.length;
   const label = q.label || '';
-  const labelParts = label.split(' · ');
-  const labelHtml = labelParts.length > 1
-    ? `<span style="color:var(--text-dim)">${labelParts[0]}</span> <span style="color:var(--accent)">${labelParts.slice(1).join(' ')}</span>`
+  const spaceIdx = label.indexOf(' ');
+  const labelHtml = spaceIdx > 0
+    ? `<span style="color:var(--text-dim)">${label.substring(0, spaceIdx)}</span> <span style="color:var(--accent)">${label.substring(spaceIdx + 1)}</span>`
     : `<span style="color:var(--text-dim)">${label}</span>`;
   document.getElementById('qOrigNum').innerHTML = labelHtml;
   const safeText = q.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -759,6 +803,7 @@ function renderQuestion() {
     codeEl.style.display = 'none';
   }
   document.getElementById('qCorrectCount').textContent = correctCount > 1 ? correctCount + ' correct answers' : '1 correct answer';
+  updateHintVisibility();
 
   const answers = shuffle([...q.answers]);
   const container = document.getElementById('answersContainer');
@@ -1116,7 +1161,7 @@ function renderIndex(list) {
     return '<div class=\"index-item\" onclick=\"jumpToQuestion(' + q.num + ')\">' +
       '<span class=\"index-num\" style=\"min-width:' + numWidth + '\">' + q.num + '</span>' +
       '<span class=\"index-text\">' + text + '</span>' +
-      '<span class=\"index-label\">' + (q.label ? q.label.split(' · ')[0] : '') + '</span>' +
+      '<span class=\"index-label\">' + (q.label ? q.label.split(' ')[0] : '') + '</span>' +
       '<span class=\"index-score ' + prog.cls + '\">' + prog.text + '</span>' +
       '</div>';
   }).join('');

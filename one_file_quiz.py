@@ -13,16 +13,17 @@ JSON structure:
   "exam_minutes": 60,
   "questions": [
     {
-      "num": 1,
       "text": "Question text",
       "code": "optional code block\nmultiline supported",
-      "source": "topic_key",
-      "label": "Topic · 1 / 5",
+      "topic": "topic_key",
       "answers": ["Answer A", "Answer B", "Answer C", "Answer D"],
       "correct": [1]
     }
   ]
 }
+
+Note: num and label are auto-generated. topic replaces source.
+      code is optional. correct uses 1-based answer indices.
 """
 
 import json
@@ -41,13 +42,7 @@ def separator(title=""):
         print(f"\n{'─' * width}")
 
 
-def ask(prompt, default=None):
-    hint = f" [{default}]" if default is not None else ""
-    val = input(f"  {prompt}{hint}: ").strip()
-    return val if val else (default or "")
-
-
-def find_json():
+def find_all_json():
     script_dir = Path(__file__).parent
     sources_dir = script_dir / "sources"
 
@@ -63,21 +58,7 @@ def find_json():
         print(f"\n  No JSON files found in sources/")
         sys.exit(1)
 
-    print(f"\n  Available quizzes:\n")
-    for i, f in enumerate(files, 1):
-        print(f"    {i}.  {f.stem}")
-
-    print()
-    while True:
-        raw = ask("Select a file (number)", "1")
-        try:
-            idx = int(raw) - 1
-            if 0 <= idx < len(files):
-                print(f"  ✓ {files[idx].name}")
-                return files[idx]
-        except ValueError:
-            pass
-        print("    Invalid selection.")
+    return files
 
 
 def read_json(json_path):
@@ -87,23 +68,21 @@ def read_json(json_path):
     errors = []
     questions = []
 
-    for q in data.get("questions", []):
-        num     = q.get("num")
+    for idx, q in enumerate(data.get("questions", []), 1):
         text    = q.get("text", "").strip()
         code    = q.get("code", "").strip()
-        source  = q.get("source", "").strip()
-        label   = q.get("label", "").strip()
+        topic   = q.get("topic", "").strip()
         answers = q.get("answers", [])
         correct = q.get("correct", [])
 
         if not text:
-            errors.append(f"Question {num}: empty text")
+            errors.append(f"Question {idx}: empty text")
             continue
         if not answers:
-            errors.append(f"Question {num}: no answers")
+            errors.append(f"Question {idx}: no answers")
             continue
         if not correct:
-            errors.append(f"Question {num}: no correct answer")
+            errors.append(f"Question {idx}: no correct answer")
             continue
 
         built_answers = [
@@ -111,8 +90,7 @@ def read_json(json_path):
             for i, a in enumerate(answers, 1)
         ]
 
-        entry = {"num": num, "text": text, "answers": built_answers,
-                 "label": label, "source": source}
+        entry = {"text": text, "answers": built_answers, "topic": topic}
         if code:
             entry["code"] = code
 
@@ -127,12 +105,22 @@ def build_config(data, questions):
     exam_count   = int(data.get("exam_count", 20))
     exam_minutes = int(data.get("exam_minutes", 60))
 
-    default_key = re.sub(r"[^a-z0-9]", "_", title.lower()).strip("_")
-    storage_key = f"ofq_{re.sub(r'_+', '_', default_key)}"
+    default_key = re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
+    storage_key = f"ofq_{default_key.replace('-', '_')}"
+
+    from collections import Counter
+    topic_counts = Counter(q["topic"] for q in questions)
+    topic_idx = {}
+    for i, q in enumerate(questions, 1):
+        q["num"] = i
+        t = q["topic"]
+        topic_idx[t] = topic_idx.get(t, 0) + 1
+        t_label = t.replace("_", " ").replace("-", " ").title()
+        q["label"] = f"{t_label} {topic_idx[t]} / {topic_counts[t]}"
 
     seen = {}
     for q in questions:
-        k = q["source"]
+        k = q["topic"]
         if k and k not in seen:
             seen[k] = k.replace("_", " ").replace("-", " ").title()
     topics = [{"key": k, "label": l} for k, l in seen.items()]
@@ -142,6 +130,7 @@ def build_config(data, questions):
 
     return {
         "title":       title,
+        "slug":        default_key,
         "topics":      topics,
         "randomCount": random_count,
         "examCount":   exam_count,
@@ -190,8 +179,7 @@ def build_html(config):
 
 
 def write_output(html, config, json_path):
-    default_name = re.sub(r"[^a-z0-9]", "-", config["title"].lower()).strip("-")
-    default_name = re.sub(r"-+", "-", default_name) + ".html"
+    default_name = config["slug"] + ".html"
 
     out_dir = json_path.parent.parent / "quizzes"
     out_dir.mkdir(exist_ok=True)
@@ -208,28 +196,40 @@ def main():
     print("│     one-file-quiz generator     │")
     print("└─────────────────────────────────┘")
 
-    json_path = find_json()
+    files = find_all_json()
+    print(f"\n  Found {len(files)} source file(s)\n")
 
-    separator("Reading")
-    data, questions, errors = read_json(json_path)
+    generated = []
+    skipped   = []
 
-    if errors:
-        print(f"\n  ⚠ {len(errors)} error(s):")
-        for e in errors:
-            print(f"    • {e}")
-        if ask("Continue anyway? (y/n)", "y").lower() != "y":
-            sys.exit(1)
+    for json_path in files:
+        separator(json_path.stem)
+        data, questions, errors = read_json(json_path)
 
-    config = build_config(data, questions)
-    print(f"  ✓ {len(questions)} questions")
-    print(f"  ✓ Topics: {', '.join(t['label'] for t in config['topics'])}")
+        if errors:
+            print(f"  ⚠ {len(errors)} error(s) – skipping:")
+            for e in errors:
+                print(f"    • {e}")
+            skipped.append(json_path.name)
+            continue
 
-    html     = build_html(config)
-    out_path = write_output(html, config, json_path)
+        config   = build_config(data, questions)
+        html     = build_html(config)
+        out_path = write_output(html, config, json_path)
+
+        print(f"  ✓ {len(questions)} questions · Topics: {', '.join(t['label'] for t in config['topics'])}")
+        print(f"  → {out_path.name}")
+        generated.append(out_path.name)
 
     separator()
-    print(f"\n  ✓ {out_path.name}")
-    print(f"    {out_path}\n")
+    print(f"\n  {len(generated)} quiz(zes) generated")
+    for name in generated:
+        print(f"    ✓ {name}")
+    if skipped:
+        print(f"\n  {len(skipped)} skipped due to errors:")
+        for name in skipped:
+            print(f"    ✗ {name}")
+    print()
 
 
 if __name__ == "__main__":

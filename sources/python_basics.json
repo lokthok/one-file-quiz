@@ -5,11 +5,8 @@
   "exam_minutes": 20,
   "questions": [
     {
-      "num": 1,
       "text": "What is the correct way to create a variable in Python?",
-      "code": "",
-      "source": "basics",
-      "label": "Basics · 1 / 5",
+      "topic": "basics",
       "answers": [
         "int x = 5",
         "x = 5",
@@ -21,11 +18,8 @@
       ]
     },
     {
-      "num": 2,
       "text": "Which of the following are valid variable names in Python?",
-      "code": "",
-      "source": "basics",
-      "label": "Basics · 2 / 5",
+      "topic": "basics",
       "answers": [
         "my_var",
         "2fast",
@@ -40,11 +34,9 @@
       ]
     },
     {
-      "num": 3,
       "text": "What will the following `code` print?",
       "code": "x = 10\nif x > 5:\n    print('big')\nelse:\n    print('small')",
-      "source": "basics",
-      "label": "Basics · 3 / 5",
+      "topic": "basics",
       "answers": [
         "small",
         "big",
@@ -56,11 +48,8 @@
       ]
     },
     {
-      "num": 4,
       "text": "What does the `//` operator do in Python?",
-      "code": "",
-      "source": "basics",
-      "label": "Basics · 4 / 5",
+      "topic": "basics",
       "answers": [
         "Writes a comment",
         "Floor division",
@@ -72,11 +61,8 @@
       ]
     },
     {
-      "num": 5,
       "text": "What is the result of `10 % 3` in Python?",
-      "code": "",
-      "source": "basics",
-      "label": "Basics · 5 / 5",
+      "topic": "basics",
       "answers": [
         "3",
         "1",
@@ -88,11 +74,8 @@
       ]
     },
     {
-      "num": 6,
       "text": "How do you write a `for` loop that iterates 5 times?",
-      "code": "",
-      "source": "control",
-      "label": "Control · 1 / 4",
+      "topic": "control",
       "answers": [
         "for i in range(5):",
         "for(i=0; i<5; i++):",
@@ -104,11 +87,8 @@
       ]
     },
     {
-      "num": 7,
       "text": "What does a `while` loop do?",
-      "code": "",
-      "source": "control",
-      "label": "Control · 2 / 4",
+      "topic": "control",
       "answers": [
         "Runs a fixed number of times",
         "Repeats a block as long as a condition is True",
@@ -120,11 +100,8 @@
       ]
     },
     {
-      "num": 8,
       "text": "What keyword is used to exit a loop early?",
-      "code": "",
-      "source": "control",
-      "label": "Control · 3 / 4",
+      "topic": "control",
       "answers": [
         "exit",
         "stop",
@@ -136,11 +113,8 @@
       ]
     },
     {
-      "num": 9,
       "text": "What does the `continue` keyword do inside a loop?",
-      "code": "",
-      "source": "control",
-      "label": "Control · 4 / 4",
+      "topic": "control",
       "answers": [
         "Exits the loop immediately",
         "Skips the rest of the current iteration",
@@ -152,11 +126,8 @@
       ]
     },
     {
-      "num": 10,
       "text": "What is the difference between a list and a tuple?",
-      "code": "",
-      "source": "datatypes",
-      "label": "Datatypes · 1 / 3",
+      "topic": "datatypes",
       "answers": [
         "Lists are ordered, tuples are not",
         "Lists are mutable, tuples are immutable",
@@ -168,11 +139,8 @@
       ]
     },
     {
-      "num": 11,
       "text": "How do you access the first element of a list called `items`?",
-      "code": "",
-      "source": "datatypes",
-      "label": "Datatypes · 2 / 3",
+      "topic": "datatypes",
       "answers": [
         "items.first()",
         "items[1]",
@@ -184,11 +152,9 @@
       ]
     },
     {
-      "num": 12,
       "text": "What does `my_list.append(4)` do?",
       "code": "my_list = [1, 2, 3]\nmy_list.append(4)",
-      "source": "datatypes",
-      "label": "Datatypes · 3 / 3",
+      "topic": "datatypes",
       "answers": [
         "Creates a new list with 4 appended",
         "Adds 4 to the end of my_list",

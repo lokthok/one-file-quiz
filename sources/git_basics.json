@@ -1,23 +1,24 @@
 {
   "title": "Git Basics",
+  "lang": "de",
   "random": 5,
   "exam_count": 8,
   "exam_minutes": 15,
   "questions": [
     {
       "topic": "basics",
-      "text": "What does `git init` do?",
+      "text": "Was macht `git init`?",
       "answers": [
-        "Downloads a remote repository",
-        "Initializes a new local Git repository",
-        "Commits all staged changes",
-        "Creates a new branch"
+        "Lädt ein Remote-Repository herunter",
+        "Initialisiert ein neues lokales Git-Repository",
+        "Committet alle gestageten Änderungen",
+        "Erstellt einen neuen Branch"
       ],
       "correct": [2]
     },
     {
       "topic": "basics",
-      "text": "Which command stages all changes for the next commit?",
+      "text": "Welcher Befehl stagt alle Änderungen für den nächsten Commit?",
       "answers": [
         "git commit -a",
         "git stage .",
@@ -28,7 +29,7 @@
     },
     {
       "topic": "basics",
-      "text": "What is the correct command to create and switch to a new branch?",
+      "text": "Welcher Befehl erstellt einen neuen Branch und wechselt direkt dorthin?",
       "answers": [
         "git branch new-branch",
         "git checkout new-branch",
@@ -39,18 +40,18 @@
     },
     {
       "topic": "basics",
-      "text": "What does `git stash` do?",
+      "text": "Was macht `git stash`?",
       "answers": [
-        "Deletes uncommitted changes permanently",
-        "Temporarily saves uncommitted changes",
-        "Commits with a temp message",
-        "Pushes changes to a stash remote"
+        "Löscht nicht committete Änderungen dauerhaft",
+        "Speichert nicht committete Änderungen temporär",
+        "Committet mit einer temporären Nachricht",
+        "Pusht Änderungen in ein Stash-Remote"
       ],
       "correct": [2]
     },
     {
       "topic": "branching",
-      "text": "Which of the following are valid git merge strategies?",
+      "text": "Welche der folgenden sind gültige Git-Merge-Strategien?",
       "answers": [
         "fast-forward",
         "recursive",
@@ -62,45 +63,45 @@
     },
     {
       "topic": "branching",
-      "text": "What does a `detached HEAD` state mean?",
+      "text": "Was bedeutet der Zustand `detached HEAD`?",
       "answers": [
-        "The HEAD file is corrupted",
-        "You are not on any branch but on a specific commit",
-        "The latest commit has no message",
-        "Your local branch is behind the remote"
+        "Die HEAD-Datei ist beschädigt",
+        "Du befindest dich auf keinem Branch, sondern auf einem bestimmten Commit",
+        "Der letzte Commit hat keine Nachricht",
+        "Dein lokaler Branch ist hinter dem Remote"
       ],
       "correct": [2]
     },
     {
       "topic": "branching",
-      "text": "What is the difference between `git merge` and `git rebase`?",
+      "text": "Was ist der Unterschied zwischen `git merge` und `git rebase`?",
       "answers": [
-        "They are identical",
-        "Merge preserves history, rebase rewrites it onto another base",
-        "Rebase only works on remote branches",
-        "Merge always creates a merge commit"
+        "Sie sind identisch",
+        "Merge bewahrt die Historie, Rebase schreibt sie auf eine neue Basis um",
+        "Rebase funktioniert nur auf Remote-Branches",
+        "Merge erstellt immer einen Merge-Commit"
       ],
       "correct": [2]
     },
     {
       "topic": "advanced",
-      "text": "What does `git cherry-pick` do?",
+      "text": "Was macht `git cherry-pick`?",
       "answers": [
-        "Applies a specific commit from another branch",
-        "Removes a commit from history",
-        "Moves all commits to a new branch",
-        "Compares two commits"
+        "Wendet einen bestimmten Commit aus einem anderen Branch an",
+        "Entfernt einen Commit aus der Historie",
+        "Verschiebt alle Commits auf einen neuen Branch",
+        "Vergleicht zwei Commits"
       ],
       "correct": [1]
     },
     {
       "topic": "advanced",
-      "text": "What does `git bisect` help you do?",
+      "text": "Wobei hilft `git bisect`?",
       "answers": [
-        "Merge two branches interactively",
-        "Split a large commit into smaller ones",
-        "Find the commit that introduced a bug",
-        "Stash changes on multiple branches"
+        "Branches interaktiv zusammenführen",
+        "Einen großen Commit in kleinere aufteilen",
+        "Den Commit finden, der einen Bug eingeführt hat",
+        "Änderungen auf mehreren Branches stashen"
       ],
       "correct": [3]
     }

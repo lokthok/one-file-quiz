@@ -11,11 +11,13 @@ A self-contained, single-file quiz tool. No backend, no dependencies, no install
 - Single HTML file per quiz – share it, email it, open it offline
 - Multiple choice with single and multi-select support
 - Code block rendering for programming questions
-- Study modes: All · Exam (timed) · Random · Mistakes
+- Study modes: All · Exam (timed) · Random · Mistakes · Favourites
+- Favourites – star any question during the quiz or in the index to build custom sets
 - Topic filtering via dropdown
+- Index with search, sortable columns and per-question progress indicators
 - Progress tracking with localStorage
-- Index view with search and progress indicators
 - PDF export
+- Multilingual UI – set `"lang": "de"` or `"lang": "en"` in your JSON
 - Clean dark UI, no external dependencies
 
 ---
@@ -27,8 +29,8 @@ one-file-quiz/
 ├── template.html            # Quiz engine – do not edit
 ├── one_file_quiz.py         # Generator script
 ├── sources/                 # Your question files go here
-│   ├── python-basics.json   # Demo
-│   └── git-basics.json      # Demo
+│   ├── python_basics.json   # Demo (English)
+│   └── git_basics.json      # Demo (German)
 └── quizzes/                 # Generated quizzes land here
     ├── python-basics.html
     └── git-basics.html
@@ -46,7 +48,7 @@ cd one-file-quiz
 python3 one_file_quiz.py
 ```
 
-The script lists all JSON files in `sources/`, asks you to pick one, and writes the finished HTML to `quizzes/`. Open it in any browser.
+The script processes all JSON files in `sources/` and writes finished HTML files to `quizzes/`. Open any of them in any browser.
 
 ---
 
@@ -55,9 +57,9 @@ The script lists all JSON files in `sources/`, asks you to pick one, and writes 
 The fastest way to create a question set is to hand it off to an AI:
 
 > Create a questions JSON for one-file-quiz based on the following topic: **[your topic]**.  
-> Use `python-basics.json` in the `sources/` folder as reference for the structure.  
+> Use `python_basics.json` in the `sources/` folder as reference for the structure.  
 > Each question needs: `text`, `topic`, `answers` (array), `correct` (array of 1-based indices). Optionally `code` for a code block.  
-> In question text, wrap keywords or code references in backticks for inline highlighting, e.g. `"What does `git init` do?"`
+> In question text, wrap keywords or code references in backticks for inline highlighting, e.g. `"What does \`git init\` do?"`
 
 Save the result as a `.json` file in `sources/` and run the generator.
 
@@ -67,39 +69,41 @@ Save the result as a `.json` file in `sources/` and run the generator.
 
 ```json
 {
-  "title": "Git Basics",
+  "title": "Python Basics",
+  "lang": "en",
   "random": 5,
   "exam_count": 10,
   "exam_minutes": 20,
   "questions": [
     {
       "topic": "basics",
-      "text": "What does `git init` do?",
-      "answers": ["Downloads a repo", "Initializes a local Git repo", "Commits staged changes", "Creates a branch"],
+      "text": "What does the `//` operator do in Python?",
+      "answers": ["Writes a comment", "Floor division", "Calculates the remainder", "Regular division"],
       "correct": [2]
     },
     {
-      "topic": "basics",
+      "topic": "datatypes",
       "text": "What will this print?",
-      "code": "x = [1, 2, 3]\nprint(x[-1])",
-      "answers": ["1", "3", "IndexError", "-1"],
+      "code": "my_list = [1, 2, 3]\nmy_list.append(4)\nprint(my_list)",
+      "answers": ["[1, 2, 3]", "[1, 2, 3, 4]", "Error", "[4, 1, 2, 3]"],
       "correct": [2]
     }
   ]
 }
 ```
 
-| Field | Description |
-|---|---|
-| `title` | Displayed as the quiz heading |
-| `random` | Number of questions in Random mode |
-| `exam_count` | Number of questions in Exam mode |
-| `exam_minutes` | Time limit for Exam mode |
-| `topic` | Groups questions into topics (used for the Topics dropdown) |
-| `text` | The question text – wrap keywords in backticks for inline highlighting |
-| `code` | Optional code block, multiline via `\n` |
-| `answers` | Array of answer strings |
-| `correct` | 1-based indices of correct answers – supports multiple |
+| Field | Required | Description |
+|---|---|---|
+| `title` | ✓ | Displayed as the quiz heading |
+| `lang` | ✓ | UI language: `"en"` or `"de"`. All button labels, feedback text and UI strings are replaced at build time by the generator — no runtime switching, no mixed-language output. Add new languages by extending `UI_STRINGS` in `one_file_quiz.py`. |
+| `random` | | Number of questions in Random mode |
+| `exam_count` | | Number of questions in Exam mode |
+| `exam_minutes` | | Time limit for Exam mode |
+| `topic` | | Groups questions (used for Topics dropdown) |
+| `text` | ✓ | Question text – wrap keywords in backticks for inline highlighting |
+| `code` | | Optional code block, multiline via `\n` |
+| `answers` | ✓ | Array of answer strings |
+| `correct` | ✓ | 1-based indices of correct answers – supports multiple |
 
 ---
 
@@ -111,7 +115,18 @@ Save the result as a `.json` file in `sources/` and run the generator.
 | **Exam** | Fixed question count, countdown timer |
 | **Random** | Small random subset, good for quick review |
 | **Mistakes** | Questions you got wrong more often than right |
+| **Favourites** | Only questions you starred |
 | **Topics** | Filter by topic via dropdown |
+
+---
+
+## Keyboard shortcuts
+
+| Key | Action |
+|---|---|
+| `1`–`9`, `0` | Select answer 1–10 |
+| `Space` | Check answer / Next question |
+| `Enter` | Toggle favourite on current question |
 
 ---
 

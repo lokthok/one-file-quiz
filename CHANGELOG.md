@@ -4,6 +4,16 @@ All notable changes to one-file-quiz are documented here.
 
 ---
 
+## [1.2.1] – 2026-02-27
+
+### UI polish
+
+- **q-meta restructured** – left: star, center: correct answer count, right: `#N` question number (cyan)
+- **Hints row** – key name centered above description for each shortcut; layout no longer breaks with longer UI strings
+- **`qOrigNum` label removed** – topic/number info was redundant with Topics dropdown and index
+
+---
+
 ## [1.2.0] – 2026-02-27
 
 ### Features

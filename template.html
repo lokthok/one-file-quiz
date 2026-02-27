@@ -435,9 +435,8 @@
   <div class="card" id="questionCard">
     <div class="q-meta" id="qMeta">
       <span class="fav-star" id="qFavStar" onclick="toggleFavCurrent()" title="{{UI_FAV_TITLE}}">&#9733;</span>
-      <span>{{UI_QUESTION}} <span class="accent" id="qNum">-</span></span>
       <span style="flex:1;text-align:center;" id="qCorrectCount"></span>
-      <span id="qOrigNum">-</span>
+      <span style="font-family:var(--mono);font-size:0.9rem;color:var(--accent);letter-spacing:0.1em;" id="qNum">#-</span>
     </div>
     <div class="q-text" id="qText"></div>
     <pre class="q-code" id="qCode" style="display:none"></pre>
@@ -450,9 +449,9 @@
     <div class="feedback" id="feedback"></div>
   </div>
   <div style="font-family:var(--mono);font-size:0.9rem;letter-spacing:0.1em;color:var(--text-dim);margin-top:1.4rem;margin-bottom:0;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;align-items:center;">
-    <span><span style="color:var(--text)">1&ndash;0</span> {{UI_HINT_SELECT}}</span>
-    <span style="text-align:center;"><span style="color:var(--text)">Space</span> {{UI_HINT_CHECK}}</span>
-    <span style="text-align:center;"><span style="color:var(--text)">Enter</span> {{UI_HINT_FAV}}</span>
+    <span style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;"><span style="color:var(--text)">1&ndash;0</span><span style="text-align:center;">{{UI_HINT_SELECT}}</span></span>
+    <span style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;"><span style="color:var(--text)">Space</span><span style="text-align:center;">{{UI_HINT_CHECK}}</span></span>
+    <span style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;"><span style="color:var(--text)">Enter</span><span style="text-align:center;">{{UI_HINT_FAV}}</span></span>
     <label class="hint-toggle-wrap" style="justify-content:flex-end;">
       <span>{{UI_SHOW_HINT}}</span>
       <input type="checkbox" id="hintToggle" checked onchange="updateHintVisibility()">
@@ -723,13 +722,13 @@ function renderQuestion() {
   const q = queue[current];
   const correctCount = q.answers.filter(a => a.correct).length;
 
-  document.getElementById('qNum').textContent = (current + 1) + ' / ' + queue.length;
+  document.getElementById('qNum').textContent = '#' + q.num;
   const label = q.label || '';
   const spaceIdx = label.indexOf(' ');
   const labelHtml = spaceIdx > 0
     ? `<span style="color:var(--text-dim)">${label.substring(0, spaceIdx)}</span> <span style="color:var(--accent)">${label.substring(spaceIdx + 1)}</span>`
     : `<span style="color:var(--text-dim)">${label}</span>`;
-  document.getElementById('qOrigNum').innerHTML = labelHtml;
+  // label no longer rendered in q-meta
 
   const safeText = q.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   document.getElementById('qText').innerHTML = safeText.replace(/`([^`]+)`/g,
@@ -1211,7 +1210,7 @@ restart();
   </div>
   <div>
     <a href="https://github.com/lokthok/one-file-quiz" target="_blank" style="color:var(--accent);text-decoration:none;">one-file-quiz</a>
-    <span style="opacity:0.5;"> v1.2.0</span>
+    <span style="opacity:0.5;"> v1.2.1</span>
   </div>
 </div>
 

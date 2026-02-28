@@ -151,7 +151,7 @@ Save the result as a `.json` file in `sources/` and run the generator.
 | Key | Action |
 |---|---|
 | `1`–`9`, `0` | Select answer 1–10 |
-| `Space` | Check answer / Next question |
+| `Space` | Check answer / Next question / Try again (result screen) |
 | `Enter` | Toggle favourite on current question |
 
 ---

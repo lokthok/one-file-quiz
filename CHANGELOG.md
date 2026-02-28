@@ -4,6 +4,17 @@ All notable changes to one-file-quiz are documented here.
 
 ---
 
+## [1.3.1] – 2026-02-28
+
+### Features
+
+- **Exam timer colours** – the countdown clock now uses a traffic-light colour scheme based on remaining time as a percentage of the total. Above 50 % the clock is green (`--correct-text`), at ≤ 50 % it turns gold (`--fav`), at ≤ 25 % it turns red (`--wrong-text`). All three colours are taken from the existing UI palette.
+- **Timer label removed** – the "Remaining" prefix is gone; only the `MM:SS` clock is shown. Cleaner, less noise.
+- **Timer auto-end** – when the countdown reaches zero the quiz automatically calls `showResult()` instead of freezing at `00:00`. Unanswered questions count as wrong in the result screen but are not written to localStorage (no unfair tier penalty for time-outs).
+- **Result screen keyboard** – `Space` now triggers Try Again on the result screen, consistent with the rest of the keyboard flow.
+
+---
+
 ## [1.3.0] – 2026-02-28
 
 ### Features

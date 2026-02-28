@@ -343,8 +343,9 @@
   .stats-row .stats-left   { display: flex; justify-content: flex-start; }
   .stats-row .stats-center { display: flex; gap: 1.5rem; justify-content: center; }
   .stats-row .stats-right  { display: flex; justify-content: flex-end; }
-  #timerDisplay { font-family: var(--mono); font-size: 0.9rem; letter-spacing: 0.1em; color: var(--text-dim); }
-  #timerDisplay.warning { color: var(--wrong-text); }
+  #timerDisplay { font-family: var(--mono); font-size: 0.9rem; letter-spacing: 0.1em; color: var(--correct-text); }
+  #timerDisplay.warning  { color: var(--fav); }
+  #timerDisplay.critical { color: var(--wrong-text); }
 
   /* ── Index ── */
   .mode-btn-index.active { border-color: var(--accent); color: var(--accent); background: transparent; }
@@ -446,7 +447,7 @@
     <span>Falsch <b id="statWrong" style="color:var(--wrong-text)">0</b> <span id="statWrongPct" style="color:var(--wrong-text);"></span></span>
   </div>
   <div class="stats-right">
-    <span id="timerDisplay" style="display:none">Verbleibend <span id="timerClock">60:00</span></span>
+    <span id="timerDisplay" style="display:none"><span id="timerClock">60:00</span></span>
   </div>
 </div>
 
@@ -1137,6 +1138,14 @@ document.addEventListener('keydown', function(e) {
     return;
   }
   if (indexOpen) return;
+
+  // Result screen: Space → Try Again
+  const resultScreen = document.getElementById('screen-result');
+  if (resultScreen.style.display === 'block') {
+    if (e.key === ' ') { e.preventDefault(); restart(); }
+    return;
+  }
+
   const screen = document.getElementById('screen-quiz');
   if (screen.style.display === 'none') return;
 
@@ -1160,16 +1169,19 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ── Timer ──
-let timerInterval = null, timerSeconds = 0;
+let timerInterval = null, timerSeconds = 0, timerTotal = 0;
 function startTimer(seconds) {
-  clearInterval(timerInterval); timerSeconds = seconds;
+  clearInterval(timerInterval); timerSeconds = seconds; timerTotal = seconds;
   const display = document.getElementById('timerDisplay');
   display.style.display = 'inline'; display.className = '';
   updateTimerDisplay();
   timerInterval = setInterval(() => {
     timerSeconds--; updateTimerDisplay();
-    if (timerSeconds <= 0) { clearInterval(timerInterval); document.getElementById('timerClock').textContent = '00:00'; }
-    if (timerSeconds <= 300) display.className = 'warning';
+    const ratio = timerSeconds / timerTotal;
+    if (timerSeconds <= 0) { clearInterval(timerInterval); showResult(); return; }
+    if (ratio <= 0.25)     display.className = 'critical';
+    else if (ratio <= 0.5) display.className = 'warning';
+    else                   display.className = '';
   }, 1000);
 }
 function stopTimer() { clearInterval(timerInterval); document.getElementById('timerDisplay').style.display = 'none'; }
@@ -1515,7 +1527,7 @@ restart();
   </div>
   <div>
     <a href="https://github.com/lokthok/one-file-quiz" target="_blank" style="color:var(--accent);text-decoration:none;">one-file-quiz</a>
-    <span style="opacity:0.5;"> v1.3.0</span>
+    <span style="opacity:0.5;"> v1.3.1</span>
   </div>
 </div>
 

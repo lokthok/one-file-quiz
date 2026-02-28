@@ -64,7 +64,7 @@ Each question tracks a **net score**: correct answers minus wrong answers. The t
 | Common | 1–4 | green |
 | Rare | 5–9 | blue |
 | Epic | 10–14 | purple |
-| Legendary | ≥ 15 | gold with glow |
+| Legendary | ≥ 15 | orange with glow |
 
 Tiers are visible in two places:
 

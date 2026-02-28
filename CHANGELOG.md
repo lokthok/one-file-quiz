@@ -15,7 +15,7 @@ All notable changes to one-file-quiz are documented here.
   | Common | 1–4 | `#1eff00` green |
   | Rare | 5–9 | `#0070dd` blue |
   | Epic | 10–14 | `#a335ee` purple |
-  | Legendary | ≥ 15 | `#ff8000` gold, pulsing glow |
+  | Legendary | ≥ 15 | `#ff8000` orange, pulsing glow |
 
   A question degrades if wrong answers accumulate and close the gap. Tiers are always live.
 

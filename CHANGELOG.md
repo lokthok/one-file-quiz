@@ -4,6 +4,38 @@ All notable changes to one-file-quiz are documented here.
 
 ---
 
+## [1.3.0] – 2026-02-28
+
+### Features
+
+- **Quality tier system** – question progress is now visualised using four tiers inspired by MMO item quality. The tier is determined by the *net score* (correct minus wrong answers) of each question, not by the raw correct count. Tiers apply to the score column in the index and the question number `#N` in the quiz panel.
+
+  | Tier | Net score | Colour |
+  |---|---|---|
+  | Common | 1–4 | `#1eff00` green |
+  | Rare | 5–9 | `#0070dd` blue |
+  | Epic | 10–14 | `#a335ee` purple |
+  | Legendary | ≥ 15 | `#ff8000` gold, pulsing glow |
+
+  A question degrades if wrong answers accumulate and close the gap. Tiers are always live.
+
+- **Topic menu badge** – each topic entry now shows a net-score badge in a dedicated left column. The badge displays `min(p.r − p.f)` across all questions in the topic — the weakest link determines the tier. The badge only appears when *every* question in the topic is individually net-positive. If any question is neutral, negative or unanswered the badge shows a grey dash. The menu re-renders from live localStorage data each time it is opened.
+
+- **Two-row index layout** – each index entry now spans two rows. Row 1: star · number · question text. Row 2: topic label (right-aligned, bleeds left into the text column). Score column spans both rows, centred.
+
+- **Score column split** – correct count (top, tier colour) and wrong count (bottom, muted red) are now displayed as separate values instead of `correct / wrong`. If wrong count is zero it is omitted.
+
+- **Question number coloured by tier** – `#N` in the quiz panel reflects the same tier logic as the index. Unbeantwortet: grey. 50/50: white. Net positive: tier colour with Legendary pulsing animation.
+
+### UI polish
+
+- **Error colour** changed from `#ff8c00` (orange) to `#e05c6e` (muted red) to eliminate the visual conflict with Legendary gold
+- **Stats row numbers** softened from `var(--text)` to `#a6b8c8` to reduce contrast aggressiveness
+- **Topic label fix** – index was showing only the first word of multi-word topic names; now resolves the full label from `QUIZ_CONFIG.topics`
+- **50/50 state** – questions with equal correct and wrong counts now render white (neutral, not a quality tier) rather than grey
+
+---
+
 ## [1.2.1] – 2026-02-27
 
 ### UI polish

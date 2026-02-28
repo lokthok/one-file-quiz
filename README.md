@@ -13,8 +13,9 @@ A self-contained, single-file quiz tool. No backend, no dependencies, no install
 - Code block rendering for programming questions
 - Study modes: All · Exam (timed) · Random · Mistakes · Favourites
 - Favourites – star any question during the quiz or in the index to build custom sets
-- Topic filtering via dropdown
-- Index with search, sortable columns and per-question progress indicators
+- Topic filtering via dropdown with live progress badges
+- Index with search, sortable columns and per-question quality tiers
+- Quality tier system – tracks how well you *really* know each question
 - Progress tracking with localStorage
 - PDF export
 - Multilingual UI – set `"lang": "de"` or `"lang": "en"` in your JSON
@@ -49,6 +50,31 @@ python3 one_file_quiz.py
 ```
 
 The script processes all JSON files in `sources/` and writes finished HTML files to `quizzes/`. Open any of them in any browser.
+
+---
+
+## Quality tier system
+
+Getting a question right once means nothing. Real learning comes from repetition – answering correctly again and again, even after getting it wrong in between. The quality tier system makes this visible.
+
+Each question tracks a **net score**: correct answers minus wrong answers. The tier is determined by this net value, not by the raw correct count. Getting a question wrong pulls the tier back down.
+
+| Tier | Net score | Colour |
+|---|---|---|
+| Common | 1–4 | green |
+| Rare | 5–9 | blue |
+| Epic | 10–14 | purple |
+| Legendary | ≥ 15 | gold with glow |
+
+Tiers are visible in two places:
+
+**Index** – the score column shows correct (top) and wrong (bottom) per question, coloured by tier. Questions you are still struggling with stay red at the bottom.
+
+**Question panel** – the `#N` question number takes on the tier colour so you know at a glance how well you know the current question before you answer.
+
+**Topic menu** – each topic entry shows a badge with the lowest net score across all its questions. This is the weakest-link value: a topic only earns a badge when *every* question in it is individually net-positive. One weak question keeps the whole topic at a dash. This tells you exactly where you still need to put in work.
+
+The idea is to give you a clear target: grind a topic until every question in it reaches the tier you want. Unlike a simple percentage, the net score reflects consistency over time – it is hard to fake.
 
 ---
 

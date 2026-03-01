@@ -14,7 +14,7 @@ A self-contained, single-file quiz tool. No backend, no dependencies, no install
 - Study modes: All · Exam (timed) · Random · Mistakes · Favourites
 - Favourites – star any question during the quiz or in the index to build custom sets
 - Topic filtering via dropdown with live progress badges
-- Index with search, sortable columns and per-question quality tiers
+- Index with search, sortable columns, per-question quality tiers and expandable answer reveal
 - Quality tier system – tracks how well you *really* know each question
 - Progress tracking with localStorage
 - PDF export
@@ -68,7 +68,7 @@ Each question tracks a **net score**: correct answers minus wrong answers. The t
 
 Tiers are visible in two places:
 
-**Index** – the score column shows correct (top) and wrong (bottom) per question, coloured by tier. Questions you are still struggling with stay red at the bottom.
+**Index** – the score column shows `correct / wrong` inline, coloured by tier. A ▼ button in the favourite column expands the full answer list for that question – correct answers in green, wrong ones dimmed.
 
 **Question panel** – the `#N` question number takes on the tier colour so you know at a glance how well you know the current question before you answer.
 

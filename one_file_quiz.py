@@ -31,7 +31,7 @@ from collections import Counter
 from datetime import date
 from pathlib import Path
 
-__version__ = "1.3.1"
+__version__ = "1.4.0"
 
 # =============================================================================
 # UI strings – add more languages here

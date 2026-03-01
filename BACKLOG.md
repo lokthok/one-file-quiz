@@ -4,15 +4,13 @@
 
 ## Short-term
 
-- **Attempt counter in score column** – `r + f` already in localStorage, just needs to be displayed
-- **Expandable answers in index** – toggle per question to reveal correct answer(s)
-- **PDF export fix** – topic and question number currently missing from output
+- **PDF export fix** – topic and question number currently missing from output *(done in 1.4.0)*
+- **Extended search** – filter by: favourites, question number, topic, positive / neutral / negative / unanswered
 
 ---
 
 ## Mid-term
 
-- **Extended search** – filter by: favourites, question number, topic, positive / neutral / negative / unanswered
 - **Index sorting** – further fine-tuning
 
 ---

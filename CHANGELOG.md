@@ -4,6 +4,15 @@ All notable changes to one-file-quiz are documented here.
 
 ---
 
+## [1.4.1] – 2026-03-01
+
+### UI
+
+- **Index alignment fix** – star and question number now span both grid rows (row 1+2) and sit vertically centered alongside the question text and topic label. Score column follows the same pattern. Previously star, number, and score were anchored to row 1 only, causing misalignment on multi-line questions.
+- **Expand button relocated** – ▼/▲ moved from column 1 row 2 to column 3 row 2, sitting left-aligned next to the topic label. Column 1 is now exclusively owned by the star.
+
+---
+
 ## [1.4.0] – 2026-03-01
 
 ### Features

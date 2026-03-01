@@ -4,6 +4,24 @@ All notable changes to one-file-quiz are documented here.
 
 ---
 
+## [1.5.0] – 2026-03-01
+
+### Features
+
+- **Platinum tier** – fifth quality tier at net score ≥ 50, above Legendary. Base colour is a muted gold (`#e8c97a`). A slow animated sweep (5.5 s) passes a brighter gold highlight across the text. Floating sparkle particles (`✦`/`✧`) in warm gold spawn at random positions around the element and fade out – deliberately sparse and non-distracting.
+- **Topic label in tier colour** – when a topic mode is active, the mode label below the toolbar reflects the topic's weakest-link tier (same logic as the topic menu badge). Updates live after each answered question. Platinum topics get the full sweep and sparkle treatment.
+- **Tier visuals applied consistently** – Platinum sweep, sparkles, and colour apply in all four places a tier can appear: question number (`#N`), score column in the index, topic menu badge, and the mode label.
+
+### UI
+
+- `#N` question number now uses class-based tier assignment instead of inline colour so `background-clip: text` animations work correctly.
+
+### Fix
+
+- Sparkle spawner refactored from a single global timer to a per-element `Map`. Each render function stops all active timers before replacing `innerHTML`, eliminating detached-node timer accumulation that caused performance degradation.
+
+---
+
 ## [1.4.1] – 2026-03-01
 
 ### UI

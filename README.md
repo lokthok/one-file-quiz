@@ -65,12 +65,15 @@ Each question tracks a **net score**: correct answers minus wrong answers. The t
 | Rare | 5–9 | blue |
 | Epic | 10–14 | purple |
 | Legendary | ≥ 15 | orange with glow |
+| Platinum | ≥ 50 | muted gold with animated bright-gold sweep and sparkle particles |
 
 Tiers are visible in two places:
 
 **Index** – the score column shows `correct / wrong` inline, coloured by tier. A ▼ button in the favourite column expands the full answer list for that question – correct answers in green, wrong ones dimmed.
 
-**Question panel** – the `#N` question number takes on the tier colour so you know at a glance how well you know the current question before you answer.
+**Question panel** – the `#N` question number takes on the tier colour so you know at a glance how well you know the current question before you answer. Platinum questions get a slow gold shimmer with a bright sweep and floating sparkle particles.
+
+**Topic label** – when a topic mode is active, the mode label below the toolbar reflects the topic's weakest-link tier and updates live after each answered question.
 
 **Topic menu** – each topic entry shows a badge with the lowest net score across all its questions. This is the weakest-link value: a topic only earns a badge when *every* question in it is individually net-positive. One weak question keeps the whole topic at a dash. This tells you exactly where you still need to put in work.
 

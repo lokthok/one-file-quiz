@@ -383,20 +383,20 @@
   .index-item:hover { background: rgba(0,180,216,0.05); }
 
   .index-fav-star {
-    grid-row: 1; grid-column: 1;
+    grid-row: 1 / 3; grid-column: 1;
     width: 1.6rem; cursor: pointer;
     font-size: 1.6rem; color: var(--text-dim);
     transition: color 0.15s;
     user-select: none; line-height: 1;
-    display: flex; align-items: flex-start; justify-content: center;
-    padding-top: 0.1em;
+    display: flex; align-items: center; justify-content: center;
+    align-self: center;
   }
   .index-fav-star:hover  { color: var(--accent); }
   .index-fav-star.active { color: var(--fav); }
 
-  .index-num   { grid-row: 1; grid-column: 2; font-family: var(--mono); font-size: 0.9rem; color: var(--accent); text-align: right; }
+  .index-num   { grid-row: 1 / 3; grid-column: 2; font-family: var(--mono); font-size: 0.9rem; color: var(--accent); text-align: right; align-self: center; padding-top: 0.4em; }
   .index-text  { grid-row: 1; grid-column: 3 / 5; font-size: 1.0rem; color: var(--text); line-height: 1.5; }
-  .index-label { grid-row: 2; grid-column: 3 / 5; font-family: var(--mono); font-size: 0.9rem; color: var(--text-dim); text-align: right; white-space: nowrap; overflow: visible; padding-top: 0.2rem; }
+  .index-label { grid-row: 2; grid-column: 3 / 5; font-family: var(--mono); font-size: 0.9rem; color: var(--text-dim); text-align: right; white-space: nowrap; padding-top: 0.2rem; }
   .index-highlight { color: var(--accent); }
   .index-answers-row {
     grid-row: 3; grid-column: 1 / -1;
@@ -409,31 +409,68 @@
   }
   .index-answers-row .ans-line.correct { color: var(--correct-text); }
   .index-expand {
-    grid-row: 2; grid-column: 1;
+    grid-row: 2; grid-column: 3;
     cursor: pointer; color: var(--text-dim); transition: color 0.15s;
     font-size: 1.1rem; line-height: 1; user-select: none;
-    display: flex; align-items: center; justify-content: center;
-    width: 1.6rem; height: 1.1rem;
+    display: flex; align-items: center; justify-content: flex-start;
   }
   .index-expand:hover { color: var(--accent); }
   .index-score {
-    grid-row: 1; grid-column: 5;
+    grid-row: 1 / 3; grid-column: 5;
     font-family: var(--mono); font-size: 0.9rem;
-    white-space: nowrap; text-align: center; align-self: center; justify-self: center;
+    white-space: nowrap; text-align: center; align-self: center; justify-self: center; padding-top: 0.4em;
     display: flex; flex-direction: row; align-items: center; gap: 0.5em;
   }
 
   /* ── WoW item quality tiers ── */
-  .q-common    { color: #1eff00; }  /* Uncommon – green  */
-  .q-rare      { color: #0070dd; }  /* Rare     – blue   */
-  .q-epic      { color: #a335ee; }  /* Epic     – purple */
-  .q-legendary { color: #ff8000; }  /* Legendary – gold  */
+  .q-common    { color: #1eff00; }  /* Uncommon – green    */
+  .q-rare      { color: #0070dd; }  /* Rare     – blue     */
+  .q-epic      { color: #a335ee; }  /* Epic     – purple   */
+  .q-legendary { color: #ff8000; }  /* Legendary – gold    */
+  .q-legendary { color: #ff8000; }
+  .q-platinum  { color: #e8c97a; }  /* Platinum/Diamond – soft gold */
 
   @keyframes legendary-pulse {
     0%, 100% { text-shadow: 0 0 4px rgba(255,128,0,0.3); color: #ff8000; }
     50%       { text-shadow: 0 0 14px rgba(255,128,0,0.75), 0 0 28px rgba(255,128,0,0.3); color: #ffaa44; }
   }
   .q-legendary { animation: legendary-pulse 4s ease-in-out infinite; }
+
+  @keyframes diamond-sweep {
+    0%   { background-position: 200% center; }
+    100% { background-position: -100% center; }
+  }
+  @keyframes sparkle-pop {
+    0%   { opacity: 0;   transform: scale(0.2) rotate(0deg); }
+    40%  { opacity: 1;   transform: scale(1)   rotate(20deg); }
+    100% { opacity: 0;   transform: scale(0.3) rotate(45deg); }
+  }
+  .q-platinum {
+    position: relative;
+    background: linear-gradient(
+      100deg,
+      #e8c97a 0%,
+      #e8c97a 35%,
+      #fce9a0 44%,
+      #fdd96a 50%,
+      #fce9a0 56%,
+      #e8c97a 65%,
+      #e8c97a 100%
+    );
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: diamond-sweep 5.5s linear infinite;
+  }
+  .diamond-sparkle-dot {
+    position: absolute;
+    pointer-events: none;
+    -webkit-text-fill-color: rgba(255, 220, 120, 0.9);
+    color: rgba(255, 220, 120, 0.9);
+    line-height: 1;
+    animation: sparkle-pop ease-out forwards;
+  }
 
   .index-score.bad     { color: var(--wrong-text); }
   .index-score.neutral { color: var(--text-dim); }
@@ -887,7 +924,16 @@ function getModeLabel() {
   if (mode.startsWith('src_')) {
     const key = mode.slice(4);
     const t = QUIZ_CONFIG.topics.find(s => s.key === key);
-    return t ? t.label : key;
+    const label = t ? t.label : key;
+    // compute weakest-link net score for this topic
+    const progress = loadProgress();
+    const topicQs = ALL_QUESTIONS.filter(q => q.topic === key);
+    const minNet = topicQs.length
+      ? Math.min(...topicQs.map(q => { const p = progress[q.num]; return p ? (p.r||0)-(p.f||0) : 0; }))
+      : 0;
+    const allPositive = topicQs.every(q => { const p = progress[q.num]; return p && p.r > 0 && p.r > p.f; });
+    const qcls = (allPositive && minNet > 0) ? getQualityClass(minNet) : '';
+    return qcls ? `<span class="${qcls}">${label}</span>` : label;
   }
   return mode;
 }
@@ -958,7 +1004,9 @@ function renderTopicMenu() {
       : `<span style="color:var(--text-dim);font-family:var(--mono);font-size:0.85rem;">—</span>`;
     html += `<div class="topic-dropdown-item" id="topic_${s.key}" onclick="setTopicMode('${s.key}')" style="display:grid;grid-template-columns:1.8rem 1fr auto;align-items:center;gap:0.4rem;"><span style="text-align:center;">${badgeContent}</span><span>${s.label}</span><span style="opacity:0.5;">${count}</span></div>`;
   });
+  stopDiamondSparkles();
   menu.innerHTML = html;
+  refreshPlatinumSparkles();
 }
 
 function toggleModeDropdown(e) {
@@ -980,10 +1028,13 @@ function setModeFromMenu(m) {
 
 function updateModeDisplay() {
   const el = document.getElementById('modeLabel');
-  if (el) el.innerHTML = getModeLabel();
-  // Index button: active only when in index
+  if (el) {
+    stopDiamondSparkles();
+    el.innerHTML = getModeLabel();
+  }
   const btnIndex = document.getElementById('btnIndex');
   if (btnIndex) btnIndex.classList.toggle('active', indexOpen);
+  refreshPlatinumSparkles();
 }
 
 function toggleTopicDropdown(e) {
@@ -1074,24 +1125,24 @@ function renderQuestion() {
   const qNumEl = document.getElementById('qNum');
   qNumEl.textContent = '#' + q.num;
   const prog = loadProgress()[q.num];
-  let numColor;
+  // reset
+  qNumEl.classList.remove('q-platinum', 'q-legendary');
+  qNumEl.style.color = '';
+  qNumEl.style.animation = '';
+  stopDiamondSparkles(qNumEl);
   if (!prog || (prog.r === 0 && prog.f === 0)) {
-    numColor = 'var(--text-dim)';
+    qNumEl.style.color = 'var(--text-dim)';
   } else {
     const net = (prog.r || 0) - (prog.f || 0);
-    if (net === 0)      numColor = '#ffffff';
-    else if (net >= 15) numColor = '#ff8000';
-    else if (net >= 10) numColor = '#a335ee';
-    else if (net >= 5)  numColor = '#0070dd';
-    else if (net > 0)   numColor = '#1eff00';
-    else                numColor = 'var(--wrong-text)';
+    if (net === 0)      qNumEl.style.color = '#ffffff';
+    else if (net >= 50) qNumEl.classList.add('q-platinum');
+    else if (net >= 15) qNumEl.classList.add('q-legendary');
+    else if (net >= 10) qNumEl.style.color = '#a335ee';
+    else if (net >= 5)  qNumEl.style.color = '#0070dd';
+    else if (net > 0)   qNumEl.style.color = '#1eff00';
+    else                qNumEl.style.color = 'var(--wrong-text)';
   }
-  qNumEl.style.color = numColor;
-  if (numColor === '#ff8000') {
-    qNumEl.style.animation = 'legendary-pulse 4s ease-in-out infinite';
-  } else {
-    qNumEl.style.animation = 'none';
-  }
+  refreshPlatinumSparkles();
   const label = q.label || '';
   const spaceIdx = label.indexOf(' ');
   const labelHtml = spaceIdx > 0
@@ -1185,6 +1236,7 @@ function checkAnswer() {
   document.getElementById('btnCheck').style.display = 'none';
   document.getElementById('btnNext').style.display = 'inline-block';
   updateMistakesCount();
+  updateModeDisplay();
 }
 
 function nextQuestion() { current++; renderQuestion(); }
@@ -1287,7 +1339,58 @@ function recordAnswer(qNum, correct) {
   if (correct) p[qNum].r++; else p[qNum].f++;
   saveProgress(p);
 }
+// ── Diamond sparkle spawner ───────────────────────────────────────────────
+const _sparkleTimers = new Map(); // host element → intervalId
+
+function stopDiamondSparkles(host) {
+  if (host) {
+    if (_sparkleTimers.has(host)) { clearInterval(_sparkleTimers.get(host)); _sparkleTimers.delete(host); }
+    host.querySelectorAll('.diamond-sparkle-dot').forEach(el => el.remove());
+  } else {
+    _sparkleTimers.forEach(id => clearInterval(id));
+    _sparkleTimers.clear();
+    document.querySelectorAll('.diamond-sparkle-dot').forEach(el => el.remove());
+  }
+}
+
+function startDiamondSparkles(host) {
+  if (_sparkleTimers.has(host)) return; // already running for this host
+  const GLYPHS = ['✦', '✧', '✦', '✦', '✧'];
+  const SIZES  = [0.38, 0.45, 0.32, 0.5, 0.36];
+  const id = setInterval(() => {
+    const count = Math.random() < 0.35 ? 2 : 1;
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        const dot = document.createElement('span');
+        dot.className = 'diamond-sparkle-dot';
+        dot.textContent = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+        dot.style.fontSize = SIZES[Math.floor(Math.random() * SIZES.length)] + 'em';
+        dot.style.left = (Math.random() * 140 - 20) + '%';
+        dot.style.top  = (Math.random() * 180 - 40) + '%';
+        const dur = 1200 + Math.random() * 800;
+        dot.style.animationDuration = dur + 'ms';
+        host.appendChild(dot);
+        setTimeout(() => dot.remove(), dur + 50);
+      }, i * (300 + Math.random() * 400));
+    }
+  }, 1200 + Math.random() * 600);
+  _sparkleTimers.set(host, id);
+}
+
+function refreshPlatinumSparkles() {
+  // clean up hosts that left the DOM or lost their platinum class
+  _sparkleTimers.forEach((id, host) => {
+    if (!document.contains(host) || !host.classList.contains('q-platinum')) {
+      stopDiamondSparkles(host);
+    }
+  });
+  // start spawner for every current platinum element that doesn't have one yet
+  document.querySelectorAll('.q-platinum').forEach(el => startDiamondSparkles(el));
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function getQualityClass(val) {
+  if (val >= 50) return 'q-platinum';
   if (val >= 15) return 'q-legendary';
   if (val >= 10) return 'q-epic';
   if (val >= 5)  return 'q-rare';
@@ -1500,6 +1603,7 @@ function renderIndex(list) {
 
   // num width handled by grid auto column
 
+  stopDiamondSparkles();
   container.innerHTML = sorted.map(q => {
     let text = q.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     text = text.replace(/`([^`]+)`/g,
@@ -1537,6 +1641,7 @@ function renderIndex(list) {
       '<div class="index-answers-row" id="idx-ans-' + q.num + '">' + answerLines + '</div>' +
       '</div>';
   }).join('');
+  refreshPlatinumSparkles();
 }
 
 function toggleIndexAnswers(qNum) {
@@ -1622,7 +1727,7 @@ updateModeDisplay();
 
 <div style="width:100%;max-width:760px;padding-top:0.8rem;border-top:1px solid var(--border);padding-bottom:0.8rem;font-family:var(--mono);font-size:0.75rem;letter-spacing:0;color:var(--text-dim);text-align:center;margin-top:1.2rem;">
   <a href="https://github.com/lokthok/one-file-quiz" target="_blank" style="color:var(--accent);text-decoration:none;">one-file-quiz</a>
-  v1.4.0
+  v1.5.0
   &middot; created by <a href="https://github.com/lokthok" target="_blank" style="color:var(--accent);text-decoration:none;">lokthok</a>
   &middot; built with Claude Sonnet 4.6
 </div>

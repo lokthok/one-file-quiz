@@ -11,11 +11,15 @@ A self-contained, single-file quiz tool. No backend, no dependencies, no install
 - Single HTML file per quiz – share it, email it, open it offline
 - Multiple choice with single and multi-select support
 - Code block rendering for programming questions
-- Study modes: All · Exam (timed) · Random · Mistakes · Favourites
+- Study modes: All · Exam (timed) · Random · Mistakes · Favourites · Topics
 - Favourites – star any question during the quiz or in the index to build custom sets
 - Topic filtering via dropdown with live progress badges
 - Index with search, sortable columns, per-question quality tiers and expandable answer reveal
 - Quality tier system – tracks how well you *really* know each question
+- Stats screen – top 10 highscore and full attempt history per mode
+- Result screen history – top 10 and last 10 attempts shown after every session
+- Wrong answer review – full answer breakdown for every missed question after each session
+- Export / Import – save and restore all progress, favourites, and history as JSON
 - Progress tracking with localStorage
 - PDF export
 - Multilingual UI – set `"lang": "de"` or `"lang": "en"` in your JSON
@@ -67,17 +71,29 @@ Each question tracks a **net score**: correct answers minus wrong answers. The t
 | Legendary | ≥ 15 | orange with glow |
 | Platinum | ≥ 50 | muted gold with animated bright-gold sweep and sparkle particles |
 
-Tiers are visible in two places:
+Tiers are visible in several places:
 
-**Index** – the score column shows `correct / wrong` inline, coloured by tier. A ▼ button in the favourite column expands the full answer list for that question – correct answers in green, wrong ones dimmed.
+**Index** – the score column shows `correct / wrong` inline, coloured by tier. A ▼ button expands the full answer list for that question – correct answers in green, wrong ones dimmed.
 
 **Question panel** – the `#N` question number takes on the tier colour so you know at a glance how well you know the current question before you answer. Platinum questions get a slow gold shimmer with a bright sweep and floating sparkle particles.
 
-**Topic label** – when a topic mode is active, the mode label below the toolbar reflects the topic's weakest-link tier and updates live after each answered question.
+**Topic label** – when a topic mode is active, the mode label reflects the topic's weakest-link tier and updates live after each answered question.
 
-**Topic menu** – each topic entry shows a badge with the lowest net score across all its questions. This is the weakest-link value: a topic only earns a badge when *every* question in it is individually net-positive. One weak question keeps the whole topic at a dash. This tells you exactly where you still need to put in work.
+**Topic menu** – each topic entry shows a badge with the lowest net score across all its questions. A topic only earns a badge when *every* question in it is individually net-positive. One weak question keeps the whole topic at a dash.
 
-The idea is to give you a clear target: grind a topic until every question in it reaches the tier you want. Unlike a simple percentage, the net score reflects consistency over time – it is hard to fake.
+**Stats and result history** – top ranks are coloured by tier. Rank 1 is Platinum, rank 2 Legendary, and so on down to rank 5/6 as Common.
+
+---
+
+## Stats and history
+
+Every completed run in All, Exam, Random, and per-topic modes is recorded in localStorage (up to 100 entries per mode).
+
+**Result screen** – immediately after finishing, the result screen shows a top 10 highscore list and the 10 most recent attempts for the current mode. The current attempt is highlighted. Time is shown in cyan. Top ranks are coloured by tier.
+
+**Stats screen** – accessible via the Stats button in the toolbar. Select a mode from the dropdown to view its full top 10 and complete attempt history.
+
+**Export / Import** – use the Export button in the index toolbar to download all localStorage data as a JSON file. Use Import to restore it on any device or browser.
 
 ---
 
@@ -141,7 +157,7 @@ Save the result as a `.json` file in `sources/` and run the generator.
 | Mode | Description |
 |---|---|
 | **All** | Every question in the set, shuffled |
-| **Exam** | Fixed question count, countdown timer |
+| **Exam** | Fixed question count, countdown timer, no answer feedback during run |
 | **Random** | Small random subset, good for quick review |
 | **Mistakes** | Questions you got wrong more often than right |
 | **Favourites** | Only questions you starred |

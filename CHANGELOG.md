@@ -4,6 +4,35 @@ All notable changes to one-file-quiz are documented here.
 
 ---
 
+## [1.6.0] – 2026-03-07
+
+### Features
+
+- **Stats screen** – accessible via a Stats button in the info row. Shows a top 10 highscore list and a full attempt history (up to 100 entries) per mode. Modes are selected via a dropdown styled like the topics menu, with tier badge (best run), mode name, and attempt count per entry. Tracked modes: All, Exam, Random, and per-topic runs.
+- **Result screen history** – after each session the result screen now shows the top 10 and the last 10 attempts for the current mode directly below the score. Top 5 ranks are coloured by tier (Platinum → Legendary → Epic → Rare → Common). The current attempt is highlighted with a cyan accent. Time column is cyan throughout.
+- **Import / Export** – Export downloads the full localStorage state as a JSON file. Import reads it back and restores all progress, favourites, learn time, and history. Buttons live in the index toolbar alongside Reset and PDF.
+- **Exam mode overhaul** – no answer highlights after checking, auto-advance to next question (no Next button), fav star and `#N` hidden during exam.
+- **Wrong answer review** – the result screen lists all incorrectly answered questions with full answer options. Correct answers are green, the selected wrong answer is red, missed required answers are shown in red, remaining options are neutral.
+
+### UI
+
+- **Info row** – the mode label (e.g. "Alle", topic name) is now built inside `renderModeButtons()` using the same JS grid as the toolbar, guaranteeing true centre alignment in all cases.
+- **Stats mode dropdown** – replaces the previous flat button row. Same grid layout as the topics dropdown: tier badge | mode name | attempt count.
+- **Rank columns** – no `#` prefix, numbers right-aligned in a fixed `2ch` column, gap before date. Ranks 7+ are grey in the result screen top 10; ranks 7+ are grey in the stats screen top 10.
+- **Sparkle performance** – `refreshPlatinumSparkles()` skips all elements inside `#screen-index`. No sparkle timers are started for index rows.
+
+### Fix
+
+- **Score sort** – index sort by Ergebnis now sorts ascending on first click (lowest net first = worst tier at top, useful for targeted review) and descending on second click (best tier at top). Tiebreaker within equal net: fewest wrong answers first (positive group), most wrong answers first (negative group).
+- **Missed answer colour** – answers that were required but not selected now render red (not green) in the wrong answer review list.
+- **Dead JS reference** – removed `resElapsed.textContent` call after the elapsed time element was removed from the result screen.
+
+### New UI strings
+
+`UI_BTN_RESET`, `UI_BTN_EXPORT`, `UI_BTN_IMPORT`, `UI_BTN_STATS`, `UI_WRONG_QUESTIONS`, `UI_STATS_HIGHSCORE`, `UI_STATS_HISTORY`, `UI_STATS_NODATA`, `UI_IMPORT_OK`, `UI_IMPORT_ERR`
+
+---
+
 ## [1.5.0] – 2026-03-01
 
 ### Features

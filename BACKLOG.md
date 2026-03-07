@@ -4,14 +4,11 @@
 
 ## Short-term
 
-- **PDF export fix** – topic and question number currently missing from output *(done in 1.4.0)*
 - **Extended search** – filter by: favourites, question number, topic, positive / neutral / negative / unanswered
 
 ---
 
 ## Mid-term
-
-- **Index sorting** – further fine-tuning
 
 ---
 

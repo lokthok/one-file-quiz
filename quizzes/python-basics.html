@@ -339,6 +339,7 @@
     margin-bottom: 1rem;
     font-family: var(--mono); font-size: 0.9rem; letter-spacing: 0; color: var(--text-dim);
   }
+
   #timerDisplay { font-family: var(--mono); font-size: 0.9rem; letter-spacing: 0; color: var(--correct-text); }
   #timerDisplay.warning  { color: var(--fav); }
   #timerDisplay.critical { color: var(--wrong-text); }
@@ -474,6 +475,52 @@
 
   .index-score.bad     { color: var(--wrong-text); }
   .index-score.neutral { color: var(--text-dim); }
+  /* ── Review (wrong questions in result screen) ── */
+  .review-header {
+    font-family: var(--mono); font-size: 0.85rem; color: var(--text-dim);
+    letter-spacing: 0; margin-bottom: 1rem; border-top: 1px solid var(--border); padding-top: 1.5rem;
+  }
+  .review-item {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 3px;
+    padding: 1rem 1.2rem; margin-bottom: 0.8rem;
+  }
+  .review-meta {
+    font-family: var(--mono); font-size: 0.78rem; color: var(--text-dim);
+    margin-bottom: 0.4rem; letter-spacing: 0;
+  }
+  .review-qtext {
+    font-size: 0.95rem; color: var(--text); line-height: 1.5; margin-bottom: 0.8rem;
+  }
+  .review-code {
+    font-family: var(--mono); font-size: 0.72rem; line-height: 1.5; color: var(--accent);
+    background: rgba(0,180,216,0.05); border: 1px solid var(--border);
+    border-left: 3px solid var(--accent); border-radius: 3px; padding: 0.5rem 0.8rem;
+    margin-bottom: 0.8rem; white-space: pre; overflow-x: auto;
+  }
+  .review-answers { display: flex; flex-direction: column; gap: 0.3rem; }
+  .review-ans {
+    display: flex; align-items: flex-start; gap: 0.6rem;
+    padding: 0.4rem 0.7rem; border: 1px solid var(--border); border-radius: 3px;
+    font-size: 0.85rem; line-height: 1.5;
+  }
+  .review-ans-correct { border-color: var(--correct-text); background: rgba(45,106,79,0.15); color: var(--correct-text); }
+  .review-ans-wrong   { border-color: var(--wrong-text);   background: rgba(107,39,55,0.2);  color: var(--wrong-text); }
+  .review-ans-missed  { border-color: var(--wrong-text); background: rgba(107,39,55,0.15); color: var(--wrong-text); opacity: 0.8; }
+  .review-ans-neutral { color: var(--text-dim); }
+
+  /* ── Stats Screen ── */
+  .stats-section-title {
+    font-family: var(--mono); font-size: 0.8rem; color: var(--text-dim);
+    letter-spacing: 0; margin-bottom: 0.75rem; text-transform: uppercase;
+  }
+  .stats-list { display: flex; flex-direction: column; gap: 0.3rem; }
+  .stats-row-item {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 0.45rem 0.75rem; border: 1px solid var(--border); border-radius: 3px;
+    font-size: 0.9rem; transition: background 0.1s;
+  }
+  .stats-row-item:hover { background: rgba(0,180,216,0.04); }
+
 
 </style>
 </head>
@@ -482,7 +529,7 @@
 <div class="header" id="quizHeader"></div>
 <div class="mode-select" id="modeSelect"></div>
 
-<div class="stats-row" id="statsRow"><span id="modeLabel" style="color:var(--accent);"></span></div>
+<div id="statsRow"></div>
 <!-- stat elements kept for JS; not shown during quiz -->
 <div style="display:none">
   <span id="statTotal">0</span>
@@ -524,12 +571,22 @@
   </div>
 </div>
 
+<div id="screen-stats" style="display:none;width:100%;max-width:760px;">
+  <div class="topic-dropdown" id="statsModeDropdown" style="position:relative;margin-bottom:1.5rem;">
+    <button class="mode-btn" id="btnStatsModeMenu" onclick="toggleStatsModeDropdown(event)">&#9662; <span id="statsModeBtnLabel">&#x2014;</span></button>
+    <div class="topic-dropdown-menu" id="statsModMenu" style="left:0;right:auto;min-width:14rem;"></div>
+  </div>
+  <div id="statsContent"></div>
+</div>
+
 <div id="screen-index" style="display:none;width:100%;max-width:760px;">
   <div style="display:flex;gap:0.8rem;margin-bottom:1rem;align-items:center;">
     <input id="indexSearch" type="text" placeholder="Search questions…" oninput="filterIndex()"
       style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:0.6rem 1rem;color:var(--text);font-family:var(--mono);font-size:0.9rem;outline:none;transition:border-color 0.15s;"
       onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
-    <button class="btn" onclick="clearStorage()">Clear history</button>
+    <button class="btn" onclick="clearStorage()">Reset</button>
+    <button class="btn" onclick="exportData()">Export</button>
+    <button class="btn" onclick="importData()">Import</button>
     <button class="btn" onclick="printOverview()">PDF</button>
   </div>
   <div id="indexCount" style="font-family:var(--mono);font-size:0.9rem;color:var(--text-dim);margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;"></div>
@@ -566,6 +623,8 @@
     <div><span class="val" id="resTotal">0</span><span>Total</span></div>
   </div>
   <button class="btn" onclick="restart()" style="margin:0 auto">Try again</button>
+  <div id="resultHistory" style="width:100%;max-width:760px;margin-top:2.5rem;text-align:left;"></div>
+  <div id="wrongList" style="width:100%;max-width:760px;margin-top:2.5rem;text-align:left;"></div>
 </div>
 
 <script>
@@ -577,7 +636,7 @@ const QUIZ_CONFIG = {
   examCount: 10,
   examMinutes: 20,
   storageKey: "ofq_python_basics",
-  generated: "01-03-2026",
+  generated: "07-03-2026",
   questions: [
     {
         "text": "What is the correct way to create a variable in Python?",
@@ -951,7 +1010,7 @@ function renderModeButtons() {
   html += `<div style="display:flex;align-items:center;gap:0.75rem;">`;
   html += `<button class="mode-btn mode-btn-index" id="btnIndex" onclick="toggleIndex()">Index</button>`;
   html += `<div style="flex:1;display:flex;justify-content:center;">`;
-  html += `<span id="learnTimeDisplay" style="display:none;font-family:var(--mono);font-size:0.9rem;color:var(--text-dim);">Study time <span id="learnTimeClock">00:00</span></span>`;
+  html += `<span id="learnTimeDisplay" style="font-family:var(--mono);font-size:0.9rem;color:var(--text-dim);">Study time <span id="learnTimeClock">00:00</span></span>`;
   html += `</div></div>`;
 
   // Center cell: Modus button perfectly centered
@@ -977,6 +1036,12 @@ function renderModeButtons() {
   }
   html += `</div>`;
 
+  html += `</div>`;
+  // Info row: same grid as toolbar, modeLabel center, Stats right
+  html += `<div style="display:grid;grid-template-columns:1fr auto 1fr;width:100%;align-items:center;margin-top:0.75rem;font-family:var(--mono);font-size:0.9rem;letter-spacing:0;color:var(--text-dim);">`;
+  html += `<div></div>`;
+  html += `<div><span id="modeLabel" style="color:var(--accent);"></span></div>`;
+  html += `<div style="display:flex;justify-content:flex-end;"><button class="mode-btn" id="btnStats" onclick="toggleStats()">Stats</button></div>`;
   html += `</div>`;
   container.innerHTML = html;
 }
@@ -1063,7 +1128,8 @@ document.addEventListener('click', () => {
   if (btnMode) btnMode.classList.remove('active');
 });
 
-let queue = [], current = 0, score = 0, mode = 'all', checked = false;
+let queue = [], current = 0, score = 0, mode = 'all', checked = false, sessionStart = 0;
+let wrongInSession = []; // {q, selected: Set of answer texts}
 
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -1101,7 +1167,15 @@ function buildQueue() {
 function restart() {
   queue = buildQueue();
   current = 0; score = 0; checked = false;
+  wrongInSession = [];
+  sessionStart = Date.now();
   document.getElementById('screen-result').style.display = 'none';
+  document.getElementById('screen-stats').style.display = 'none';
+  statsOpen = false;
+  const statRow = document.getElementById('statsRow');
+  const progWrap = document.getElementById('progressWrap');
+  if (statRow)  statRow.style.display  = '';
+  if (progWrap) progWrap.style.display = '';
   document.getElementById('screen-quiz').style.display = 'block';
   document.getElementById('statCorrect').textContent = '0';
   document.getElementById('statWrong').textContent = '0';
@@ -1117,7 +1191,6 @@ function restart() {
 function renderQuestion() {
   if (current >= queue.length) { showResult(); return; }
   checked = false;
-  startLearnTime();
   resetInactivity();
   const q = queue[current];
   const correctCount = q.answers.filter(a => a.correct).length;
@@ -1143,6 +1216,18 @@ function renderQuestion() {
     else                qNumEl.style.color = 'var(--wrong-text)';
   }
   refreshPlatinumSparkles();
+
+  // Exam mode: hide identifying elements
+  const favStarEl = document.getElementById('qFavStar');
+  const qNumEl2   = document.getElementById('qNum');
+  if (mode === 'exam') {
+    if (favStarEl) favStarEl.style.visibility = 'hidden';
+    if (qNumEl2)   qNumEl2.style.visibility   = 'hidden';
+  } else {
+    if (favStarEl) favStarEl.style.visibility = '';
+    if (qNumEl2)   qNumEl2.style.visibility   = '';
+  }
+
   const label = q.label || '';
   const spaceIdx = label.indexOf(' ');
   const labelHtml = spaceIdx > 0
@@ -1191,23 +1276,36 @@ function toggleAnswer(div) {
 
 function checkAnswer() {
   checked = true;
+  startLearnTime();
   const answers = document.querySelectorAll('.answer');
   const q = queue[current];
   const correctCount = q.answers.filter(a => a.correct).length;
-  let selectedCorrect = 0, selectedWrong = 0;
+  const isExam = (mode === 'exam');
 
+  // Capture selected texts BEFORE class manipulation (needed for exam mode review)
+  const selectedTexts = new Set();
+  answers.forEach(div => {
+    if (div.classList.contains('selected'))
+      selectedTexts.add(div.querySelector('.answer-text').textContent);
+  });
+
+  let selectedCorrect = 0, selectedWrong = 0;
   answers.forEach(div => {
     const isCorrect  = div.dataset.correct === 'true';
     const isSelected = div.classList.contains('selected');
     div.classList.add('locked');
-    if (isSelected && isCorrect) {
-      div.classList.remove('selected'); div.classList.add('correct');
-      div.querySelector('.check-box').textContent = '\u2713'; selectedCorrect++;
-    } else if (isSelected && !isCorrect) {
-      div.classList.remove('selected'); div.classList.add('wrong');
-      div.querySelector('.check-box').textContent = '\u2717'; selectedWrong++;
-    } else if (!isSelected && isCorrect) {
-      div.classList.add('missed');
+    if (isSelected && isCorrect)  { selectedCorrect++; }
+    else if (isSelected && !isCorrect) { selectedWrong++; }
+    if (!isExam) {
+      if (isSelected && isCorrect) {
+        div.classList.remove('selected'); div.classList.add('correct');
+        div.querySelector('.check-box').textContent = '\u2713';
+      } else if (isSelected && !isCorrect) {
+        div.classList.remove('selected'); div.classList.add('wrong');
+        div.querySelector('.check-box').textContent = '\u2717';
+      } else if (!isSelected && isCorrect) {
+        div.classList.add('missed');
+      }
     }
   });
 
@@ -1215,23 +1313,38 @@ function checkAnswer() {
   recordAnswer(queue[current].num, perfect);
   resetInactivity();
 
-  const feedback = document.getElementById('feedback');
+  if (!perfect) {
+    wrongInSession.push({ q: queue[current], selected: selectedTexts });
+  }
+
   if (perfect) {
     score++;
-    feedback.textContent = '\u2713 Correct';
-    feedback.className = 'feedback ok';
     document.getElementById('statCorrect').textContent = score;
     const answeredC = current + 1;
     document.getElementById('statCorrectPct').textContent = '(' + Math.round(score / answeredC * 100) + '%)';
     document.getElementById('statWrongPct').textContent = '';
   } else {
-    feedback.textContent = '\u2717 Wrong';
-    feedback.className = 'feedback fail';
     const wrong = current + 1 - score;
     document.getElementById('statWrong').textContent = wrong;
     const answeredW = current + 1;
     document.getElementById('statWrongPct').textContent = '(' + Math.round(wrong / answeredW * 100) + '%)';
     document.getElementById('statCorrectPct').textContent = score > 0 ? '(' + Math.round(score / answeredW * 100) + '%)' : '';
+  }
+
+  if (isExam) {
+    // Exam mode: no visual feedback, advance directly
+    current++;
+    renderQuestion();
+    return;
+  }
+
+  const feedback = document.getElementById('feedback');
+  if (perfect) {
+    feedback.textContent = '\u2713 Correct';
+    feedback.className = 'feedback ok';
+  } else {
+    feedback.textContent = '\u2717 Wrong';
+    feedback.className = 'feedback fail';
   }
   document.getElementById('btnCheck').style.display = 'none';
   document.getElementById('btnNext').style.display = 'inline-block';
@@ -1247,17 +1360,161 @@ function updateProgress() {
   document.getElementById('progressLabel').textContent = current + ' / ' + queue.length;
 }
 
+// ── History ──
+function getHistoryKey() { return QUIZ_CONFIG.storageKey + '_history'; }
+function loadHistory() {
+  try { const raw = localStorage.getItem(getHistoryKey()); return raw ? JSON.parse(raw) : {}; } catch(e) { return {}; }
+}
+function saveHistory(h) {
+  try { localStorage.setItem(getHistoryKey(), JSON.stringify(h)); } catch(e) {}
+}
+function getModeHistoryKey() {
+  if (mode.startsWith('src_')) return mode;
+  return mode;
+}
+function recordAttempt(modeKey, elapsedSec, correctCount, totalCount) {
+  const recordModes = ['all','exam','random'];
+  if (!recordModes.includes(modeKey) && !modeKey.startsWith('src_')) return;
+  const h = loadHistory();
+  if (!h[modeKey]) h[modeKey] = [];
+  const wrongPct = totalCount > 0 ? Math.round((totalCount - correctCount) / totalCount * 100) : 0;
+  h[modeKey].unshift({
+    ts: Date.now(),
+    elapsed: elapsedSec,
+    correct: correctCount,
+    total: totalCount,
+    wrongPct: wrongPct
+  });
+  if (h[modeKey].length > 100) h[modeKey] = h[modeKey].slice(0, 100);
+  saveHistory(h);
+}
+function fmtElapsed(sec) {
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+function fmtDate(ts) {
+  const d = new Date(ts);
+  return String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + d.getFullYear()
+    + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+
 function showResult() {
   document.getElementById('screen-quiz').style.display = 'none';
+  document.getElementById('screen-stats').style.display = 'none';
+  statsOpen = false;
   stopTimer();
+  pauseLearnTime();
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  const statRow = document.getElementById('statsRow');
+  const progWrap = document.getElementById('progressWrap');
+  if (statRow)  statRow.style.display  = '';
+  if (progWrap) progWrap.style.display = '';
   document.getElementById('screen-result').style.display = 'block';
   const pct = Math.round(score / queue.length * 100);
+  const wrongCount = queue.length - score;
   document.getElementById('resultScore').textContent = pct + '%';
   document.getElementById('resCorrect').textContent = score;
-  document.getElementById('resWrong').textContent = queue.length - score;
+  document.getElementById('resWrong').textContent = wrongCount;
   document.getElementById('resTotal').textContent = queue.length;
+
+  const elapsedSec = sessionStart ? Math.round((Date.now() - sessionStart) / 1000) : 0;
+
+  recordAttempt(mode, elapsedSec, score, queue.length);
+  renderResultHistory();
+  renderWrongList();
   updateProgress();
+}
+
+
+function renderResultHistory() {
+  const container = document.getElementById('resultHistory');
+  if (!container) return;
+  const recordModes = ['all','exam','random'];
+  if (!recordModes.includes(mode) && !mode.startsWith('src_')) {
+    container.innerHTML = ''; return;
+  }
+  const history = loadHistory();
+  const attempts = history[mode];
+  if (!attempts || attempts.length === 0) { container.innerHTML = ''; return; }
+
+  const currentTs = attempts[0].ts;  // always the just-recorded attempt
+
+  // Top 10
+  const sorted = [...attempts].sort((a,b) => {
+    if (a.wrongPct !== b.wrongPct) return a.wrongPct - b.wrongPct;
+    return a.elapsed - b.elapsed;
+  });
+  const top10 = sorted.slice(0, 10);
+  const RANK_CLASSES = ['q-platinum','q-legendary','q-epic','q-rare','q-common'];
+  const hsRows = top10.map((a, i) => {
+    const tierCls  = i < 5 ? RANK_CLASSES[i] : '';
+    const rankId   = 'result-rank-' + i;
+    const rankStyle = i >= 6 ? 'color:var(--text-dim);' : '';
+    const errColor = a.wrongPct === 0 ? 'var(--correct-text)' : a.wrongPct < 20 ? 'var(--accent)' : a.wrongPct < 50 ? 'var(--fav)' : 'var(--wrong-text)';
+    const hlStyle = a.ts === currentTs ? 'background:rgba(0,200,255,0.07);box-shadow:inset 2px 0 0 var(--accent);' : '';
+    return '<div class="stats-row-item" style="' + hlStyle + '">' +
+      '<span id="' + rankId + '" class="' + tierCls + '" style="font-weight:600;font-family:var(--mono);width:2ch;text-align:right;flex-shrink:0;' + rankStyle + '">' + (i+1) + '</span>' +
+      '<span style="color:var(--text-dim);font-family:var(--mono);font-size:0.8rem;flex:1;margin-left:0.75rem;">' + fmtDate(a.ts) + '</span>' +
+      '<span style="color:' + errColor + ';font-family:var(--mono);min-width:3rem;">' + a.wrongPct + '% Wrong</span>' +
+      '<span style="color:var(--text-dim);font-family:var(--mono);font-size:0.8rem;min-width:4rem;text-align:right;">' + a.correct + '/' + a.total + '</span>' +
+      '<span style="font-family:var(--mono);text-align:right;min-width:3.5rem;color:var(--accent);">' + fmtElapsed(a.elapsed) + '</span>' +
+      '</div>';
+  }).join('');
+
+  // Last 10
+  const last10 = attempts.slice(0, 10);
+  const lastRows = last10.map((a, i) => {
+    const errColor = a.wrongPct === 0 ? 'var(--correct-text)' : a.wrongPct < 20 ? 'var(--accent)' : a.wrongPct < 50 ? 'var(--fav)' : 'var(--wrong-text)';
+    const hlStyle = i === 0 ? 'background:rgba(0,200,255,0.07);box-shadow:inset 2px 0 0 var(--accent);' : '';
+    return '<div class="stats-row-item" style="' + hlStyle + '">' +
+      '<span style="color:var(--text-dim);font-family:var(--mono);font-size:0.75rem;width:2ch;text-align:right;flex-shrink:0;">' + (i+1) + '</span>' +
+      '<span style="color:var(--text-dim);font-family:var(--mono);font-size:0.8rem;flex:1;margin-left:0.75rem;">' + fmtDate(a.ts) + '</span>' +
+      '<span style="color:' + errColor + ';font-family:var(--mono);min-width:3rem;">' + a.wrongPct + '% Wrong</span>' +
+      '<span style="color:var(--text-dim);font-family:var(--mono);font-size:0.8rem;min-width:4rem;text-align:right;">' + a.correct + '/' + a.total + '</span>' +
+      '<span style="font-family:var(--mono);text-align:right;min-width:3.5rem;color:var(--accent);">' + fmtElapsed(a.elapsed) + '</span>' +
+      '</div>';
+  }).join('');
+
+  container.innerHTML =
+    '<div class="stats-section-title">Top 10</div>' +
+    '<div class="stats-list">' + hsRows + '</div>' +
+    '<div class="stats-section-title" style="margin-top:2rem;">History</div>' +
+    '<div class="stats-list">' + lastRows + '</div>';
+  const rank1 = document.getElementById('result-rank-0');
+  if (rank1 && rank1.classList.contains('q-platinum')) startDiamondSparkles(rank1);
+}
+function renderWrongList() {
+  const container = document.getElementById('wrongList');
+  if (!container) return;
+  if (wrongInSession.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+  const rows = wrongInSession.map(entry => {
+    const q = entry.q;
+    const sel = entry.selected;
+    const safeText = q.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const qText = safeText.replace(/`([^`]+)`/g,
+      '<code style="font-family:var(--mono);font-size:0.85em;background:rgba(0,180,216,0.1);color:var(--accent);padding:0.1em 0.3em;border-radius:3px;">$1</code>');
+    const topicLabel = q.topic ? (QUIZ_CONFIG.topics.find(t => t.key === q.topic) || {label: q.topic}).label : '';
+    const ansHtml = q.answers.map(a => {
+      const safeAns = a.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const isSelected = sel.has(a.text);
+      let cls = '', icon = '';
+      if (isSelected && a.correct)  { cls = 'review-ans-correct'; icon = '\u2713 '; }
+      else if (isSelected && !a.correct) { cls = 'review-ans-wrong';   icon = '\u2717 '; }
+      else if (!isSelected && a.correct) { cls = 'review-ans-missed';  icon = '\u25cb '; }
+      else                               { cls = 'review-ans-neutral'; icon = '\u25cb '; }
+      return '<div class="review-ans ' + cls + '"><span class="review-check-box"></span><span>' + icon + safeAns + '</span></div>';
+    }).join('');
+    return '<div class="review-item">' +
+      '<div class="review-meta">#' + q.num + (topicLabel ? ' &middot; ' + topicLabel : '') + '</div>' +
+      '<div class="review-qtext">' + qText + '</div>' +
+      (q.code ? '<pre class="review-code">' + q.code.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</pre>' : '') +
+      '<div class="review-answers">' + ansHtml + '</div>' +
+      '</div>';
+  }).join('');
+  container.innerHTML = '<div class="review-header">Wrong answers (' + wrongInSession.length + ')</div>' + rows;
 }
 
 // ── Keyboard ──
@@ -1449,7 +1706,6 @@ function saveLearnTime() { try { localStorage.setItem(getLearnTimeKey(), String(
 function startLearnTime() {
   if (learnRunning) return;
   learnRunning = true;
-  document.getElementById('learnTimeDisplay').style.display = 'inline';
   learnInterval = setInterval(() => { learnSeconds++; updateLearnDisplay(); if (learnSeconds % 10 === 0) saveLearnTime(); }, 1000);
 }
 function pauseLearnTime() {
@@ -1468,6 +1724,212 @@ function updateLearnDisplay() {
   document.getElementById('learnTimeClock').textContent = text;
 }
 function initLearnTime() { learnSeconds = loadLearnTime(); updateLearnDisplay(); }
+
+
+// ── Stats Screen ──
+let statsOpen = false;
+let statsActiveMode = null;
+
+function getModeDisplayName(modeKey) {
+  if (modeKey === 'all')       return 'All';
+  if (modeKey === 'exam')      return 'Exam';
+  if (modeKey === 'random')    return 'Random';
+  if (modeKey.startsWith('src_')) {
+    const key = modeKey.slice(4);
+    const t = QUIZ_CONFIG.topics.find(s => s.key === key);
+    return t ? t.label : key;
+  }
+  return modeKey;
+}
+
+function toggleStats() {
+  statsOpen = !statsOpen;
+  const sc    = document.getElementById('screen-stats');
+  const quiz  = document.getElementById('screen-quiz');
+  const res   = document.getElementById('screen-result');
+  const idx   = document.getElementById('screen-index');
+  const stat  = document.getElementById('statsRow');
+  const prog  = document.getElementById('progressWrap');
+  const btn   = document.getElementById('btnStats');
+  if (statsOpen) {
+    sc.style.display = 'block';
+    quiz.style.display = 'none';
+    res.style.display = 'none';
+    idx.style.display = 'none';
+    stat.style.display = 'none';
+    prog.style.display = 'none';
+    indexOpen = false;
+    stopTimer(); pauseLearnTime();
+    renderStatsScreen();
+    if (btn) btn.classList.add('active');
+  } else {
+    sc.style.display = 'none';
+    stat.style.display = '';
+    prog.style.display = '';
+    if (btn) btn.classList.remove('active');
+    restart();
+  }
+  updateModeDisplay();
+}
+
+function renderStatsScreen() {
+  const history = loadHistory();
+  const availableModes = Object.keys(history).filter(k => history[k] && history[k].length > 0);
+  if (!statsActiveMode || !availableModes.includes(statsActiveMode)) {
+    statsActiveMode = availableModes[0] || null;
+  }
+
+  // Render mode dropdown — same grid layout as topics menu
+  const menu = document.getElementById('statsModMenu');
+  const btnLabel = document.getElementById('statsModeBtnLabel');
+  if (menu) {
+    if (availableModes.length === 0) {
+      menu.innerHTML = '<div class="topic-dropdown-item" style="opacity:0.5;">No attempts recorded yet</div>';
+      if (btnLabel) btnLabel.textContent = '—';
+    } else {
+      const progress = loadProgress();
+      // Mode order: all, random, exam, favorites, wrong, then src_ topics
+      const modeOrder = ['all','random','exam'];
+      const ordered = [
+        ...modeOrder.filter(m => availableModes.includes(m)),
+        ...availableModes.filter(m => m.startsWith('src_'))
+      ];
+      menu.innerHTML = ordered.map(mk => {
+        const attempts = history[mk] || [];
+        const count = attempts.length;
+        // Best attempt: lowest wrongPct, then lowest elapsed
+        const best = [...attempts].sort((a,b) => a.wrongPct !== b.wrongPct ? a.wrongPct - b.wrongPct : a.elapsed - b.elapsed)[0];
+        const hasBest = best && best.wrongPct === 0;
+        // For tier badge: use best run's correct/total ratio → net proxy = correct - wrong
+        const net = best ? best.correct - (best.total - best.correct) : 0;
+        const qcls = hasBest ? getQualityClass(net) : '';
+        const badge = hasBest
+          ? '<span class="' + qcls + '" style="font-family:var(--mono);font-size:0.85rem;">' + net + '</span>'
+          : '<span style="color:var(--text-dim);font-family:var(--mono);font-size:0.85rem;">—</span>';
+        const isWrong = mk === 'wrong';
+        const activeClass = mk === statsActiveMode ? ' active' : '';
+        const wrongClass = isWrong ? ' topic-dropdown-item--wrong' : '';
+        return '<div class="topic-dropdown-item' + activeClass + wrongClass + '" data-statsmode="' + mk + '" onclick="setStatsMode(this.dataset.statsmode);closeStatsModeDropdown();" style="display:grid;grid-template-columns:1.8rem 1fr auto;align-items:center;gap:0.4rem;">' +
+          '<span style="text-align:center;">' + badge + '</span>' +
+          '<span>' + getModeDisplayName(mk) + '</span>' +
+          '<span style="opacity:0.5;">' + count + '</span>' +
+          '</div>';
+      }).join('');
+      if (btnLabel) btnLabel.textContent = statsActiveMode ? getModeDisplayName(statsActiveMode) : '—';
+    }
+  }
+
+  // Render content
+  const contentEl = document.getElementById('statsContent');
+  if (!contentEl) return;
+  if (!statsActiveMode || !history[statsActiveMode] || history[statsActiveMode].length === 0) {
+    contentEl.innerHTML = '<div style="color:var(--text-dim);font-family:var(--mono);font-size:0.9rem;padding:2rem 0;text-align:center;">No attempts recorded yet</div>';
+    return;
+  }
+
+  const attempts = history[statsActiveMode];
+
+  // Top 10 highscore: sort by wrongPct asc, then elapsed asc
+  const sorted = [...attempts].sort((a,b) => {
+    if (a.wrongPct !== b.wrongPct) return a.wrongPct - b.wrongPct;
+    return a.elapsed - b.elapsed;
+  });
+  const top10 = sorted.slice(0, 10);
+
+  const STATS_RANK_CLS = ['q-platinum','q-legendary','q-epic','q-rare','q-common','q-common'];
+  const hsRows = top10.map((a, i) => {
+    const tierCls = i < 6 ? STATS_RANK_CLS[i] : '';
+    const rankStyle = i >= 6 ? 'color:var(--text-dim);' : '';
+    const errPct = a.wrongPct;
+    const errColor = errPct === 0 ? 'var(--correct-text)' : errPct < 20 ? 'var(--accent)' : errPct < 50 ? 'var(--fav)' : 'var(--wrong-text)';
+    return '<div class="stats-row-item">' +
+      '<span class="' + tierCls + '" style="font-weight:600;font-family:var(--mono);width:2ch;text-align:right;flex-shrink:0;' + rankStyle + '">' + (i+1) + '</span>' +
+      '<span style="color:var(--text-dim);font-family:var(--mono);font-size:0.8rem;flex:1;margin-left:0.75rem;">' + fmtDate(a.ts) + '</span>' +
+      '<span style="color:' + errColor + ';font-family:var(--mono);min-width:3rem;">' + errPct + '% Wrong</span>' +
+      '<span style="color:var(--text-dim);font-family:var(--mono);font-size:0.8rem;min-width:4rem;text-align:right;">' + a.correct + '/' + a.total + '</span>' +
+      '<span style="font-family:var(--mono);text-align:right;min-width:3.5rem;color:var(--accent);">' + fmtElapsed(a.elapsed) + '</span>' +
+      '</div>';
+  }).join('');
+
+  // All attempts list
+  const allRows = attempts.map((a, i) => {
+    const errPct = a.wrongPct;
+    const errColor = errPct === 0 ? 'var(--correct-text)' : errPct < 20 ? 'var(--accent)' : errPct < 50 ? 'var(--fav)' : 'var(--wrong-text)';
+    return '<div class="stats-row-item">' +
+      '<span style="color:var(--text-dim);font-family:var(--mono);font-size:0.75rem;width:2ch;text-align:right;flex-shrink:0;">' + (i+1) + '</span>' +
+      '<span style="color:var(--text-dim);font-family:var(--mono);font-size:0.8rem;flex:1;margin-left:0.75rem;">' + fmtDate(a.ts) + '</span>' +
+      '<span style="color:' + errColor + ';font-family:var(--mono);min-width:3rem;">' + errPct + '% Wrong</span>' +
+      '<span style="color:var(--text-dim);font-family:var(--mono);font-size:0.8rem;min-width:4rem;text-align:right;">' + a.correct + '/' + a.total + '</span>' +
+      '<span style="font-family:var(--mono);text-align:right;min-width:3.5rem;color:var(--accent);">' + fmtElapsed(a.elapsed) + '</span>' +
+      '</div>';
+  }).join('');
+
+  contentEl.innerHTML =
+    '<div class="stats-section-title">Top 10</div>' +
+    '<div class="stats-list">' + (hsRows || '<div style="color:var(--text-dim);font-family:var(--mono);font-size:0.85rem;padding:0.5rem 0;">—</div>') + '</div>' +
+    '<div class="stats-section-title" style="margin-top:2rem;">History (' + attempts.length + ')</div>' +
+    '<div class="stats-list">' + allRows + '</div>';
+}
+
+function toggleStatsModeDropdown(e) {
+  e.stopPropagation();
+  const menu = document.getElementById('statsModMenu');
+  if (!menu) return;
+  const isOpen = menu.style.display === 'block';
+  menu.style.display = isOpen ? '' : 'block';
+}
+function closeStatsModeDropdown() {
+  const menu = document.getElementById('statsModMenu');
+  if (menu) menu.style.display = '';
+}
+function setStatsMode(modeKey) {
+  statsActiveMode = modeKey;
+  renderStatsScreen();
+}
+
+// ── Import / Export ──
+function exportData() {
+  const data = {
+    storageKey: QUIZ_CONFIG.storageKey,
+    progress:   loadProgress(),
+    favorites:  [...loadFavorites()],
+    learntime:  learnSeconds,
+    history:    loadHistory()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = QUIZ_CONFIG.storageKey + '_backup.json';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+function importData() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (data.progress)  saveProgress(data.progress);
+        if (data.favorites) saveFavorites(new Set(data.favorites));
+        if (typeof data.learntime === 'number') {
+          learnSeconds = data.learntime;
+          try { localStorage.setItem(getLearnTimeKey(), String(learnSeconds)); } catch(e) {}
+          updateLearnDisplay();
+        }
+        if (data.history)   saveHistory(data.history);
+        updateMistakesCount(); updateModeDisplay();
+        alert('Import successful.');
+      } catch(err) { alert('Import failed – invalid file.'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
 
 // ── PDF ──
 function printOverview() {
@@ -1497,7 +1959,7 @@ function printOverview() {
 
 // ── Index & Sort ──
 let indexOpen = false;
-// scoreFlipped: false = negative first, true = positive first
+// scoreFlipped: false = positive first (default), true = negative first
 let sortCol = 'num', sortDir = 1, scoreFlipped = false;
 
 function setSort(col) {
@@ -1527,13 +1989,13 @@ function updateSortHeaders() {
 }
 
 function getScoreSortKey(q) {
-  // group when !scoreFlipped: neg=0, pos=1, neutral=2, empty=3
-  // group when  scoreFlipped: pos=0, neg=1, neutral=2, empty=3
+  // [group, net, wrongCount, qnum]
   const p = loadProgress()[q.num];
-  if (!p || (p.r === 0 && p.f === 0)) return [3, 0, q.num];
-  if (p.r > p.f) return [scoreFlipped ? 0 : 1, p.r, q.num];  // positive
-  if (p.f > p.r) return [scoreFlipped ? 1 : 0, p.f, q.num];  // negative
-  return [2, p.r, q.num];                                     // neutral
+  if (!p || (p.r === 0 && p.f === 0)) return [3, 0, 0, q.num];
+  const net = (p.r || 0) - (p.f || 0);
+  if (net > 0) return [0, net, p.f || 0, q.num];
+  if (net < 0) return [2, net, p.f || 0, q.num];
+  return [1, 0, 0, q.num];
 }
 
 function getSortValue(q, col) {
@@ -1547,12 +2009,16 @@ function getSortValue(q, col) {
 function sortQuestions(list) {
   if (sortCol === 'score') {
     return [...list].sort((a, b) => {
-      const [ag, av, an] = getScoreSortKey(a);
-      const [bg, bv, bn] = getScoreSortKey(b);
-      if (ag !== bg) return ag - bg;                  // group order: 0→1→2→3
-      if (ag === 3)  return an - bn;                  // unanswered: by num asc
-      if (av !== bv) return bv - av;                  // within group: value desc
-      return an - bn;                                 // tiebreak: num asc
+      const [ag, av, aw, an] = getScoreSortKey(a);
+      const [bg, bv, bw, bn] = getScoreSortKey(b);
+      if (ag !== bg) return ag - bg;
+      if (ag === 3)  return an - bn;
+      if (av !== bv) {
+        if (ag === 0) return scoreFlipped ? bv - av : av - bv;  // positive: by net
+        return av - bv;                                          // negative: most negative first
+      }
+      if (aw !== bw) return ag === 0 ? aw - bw : bw - aw;  // pos: fewest wrong first; neg: most wrong first
+      return an - bn;
     });
   }
   return [...list].sort((a, b) => {
@@ -1574,6 +2040,8 @@ function toggleIndex() {
   if (indexOpen) {
     sc.style.display = 'block'; quiz.style.display = 'none';
     res.style.display = 'none'; stat.style.display = 'none'; prog.style.display = 'none';
+    document.getElementById('screen-stats').style.display = 'none';
+    statsOpen = false; document.getElementById('btnStats') && document.getElementById('btnStats').classList.remove('active');
     stopTimer(); pauseLearnTime();
     document.getElementById('indexSearch').value = '';
     updateSortHeaders();
@@ -1699,6 +2167,7 @@ function clearStorage() {
     localStorage.removeItem(getStorageKey());
     localStorage.removeItem(getLearnTimeKey());
     localStorage.removeItem(getFavKey());
+    localStorage.removeItem(getHistoryKey());
   } catch(e) {}
   learnSeconds = 0; updateLearnDisplay();
   const favItem = document.getElementById('modeitem_favorites');
@@ -1727,7 +2196,7 @@ updateModeDisplay();
 
 <div style="width:100%;max-width:760px;padding-top:0.8rem;border-top:1px solid var(--border);padding-bottom:0.8rem;font-family:var(--mono);font-size:0.75rem;letter-spacing:0;color:var(--text-dim);text-align:center;margin-top:1.2rem;">
   <a href="https://github.com/lokthok/one-file-quiz" target="_blank" style="color:var(--accent);text-decoration:none;">one-file-quiz</a>
-  v1.5.0
+  v1.6.0
   &middot; created by <a href="https://github.com/lokthok" target="_blank" style="color:var(--accent);text-decoration:none;">lokthok</a>
   &middot; built with Claude Sonnet 4.6
 </div>

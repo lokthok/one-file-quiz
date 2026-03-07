@@ -31,7 +31,7 @@ from collections import Counter
 from datetime import date
 from pathlib import Path
 
-__version__ = "1.5.0"
+__version__ = "1.6.0"
 
 # =============================================================================
 # UI strings – add more languages here
@@ -76,6 +76,16 @@ UI_STRINGS = {
         "UI_CONFIRM_CLEAR":   "Reset all progress, study time and favorites?",
         "UI_BTN_CLEAR":       "Clear history",
         "UI_BTN_MODE_MENU":   "Mode",
+        "UI_BTN_RESET":       "Reset",
+        "UI_BTN_EXPORT":      "Export",
+        "UI_BTN_IMPORT":      "Import",
+        "UI_BTN_STATS":       "Stats",
+        "UI_WRONG_QUESTIONS": "Wrong answers",
+        "UI_STATS_HIGHSCORE": "Top 10",
+        "UI_STATS_HISTORY":   "History",
+        "UI_STATS_NODATA":    "No attempts recorded yet",
+        "UI_IMPORT_OK":       "Import successful.",
+        "UI_IMPORT_ERR":      "Import failed – invalid file.",
     },
     "de": {
         "LANG_CODE":          "de",
@@ -116,6 +126,16 @@ UI_STRINGS = {
         "UI_CONFIRM_CLEAR":   "Gesamten Fortschritt, Lernzeit und Favoriten zur\u00fccksetzen?",
         "UI_BTN_CLEAR":       "Verlauf l\u00f6schen",
         "UI_BTN_MODE_MENU":   "Modus",
+        "UI_BTN_RESET":       "Reset",
+        "UI_BTN_EXPORT":      "Export",
+        "UI_BTN_IMPORT":      "Import",
+        "UI_BTN_STATS":       "Stats",
+        "UI_WRONG_QUESTIONS": "Falsche Antworten",
+        "UI_STATS_HIGHSCORE": "Top 10",
+        "UI_STATS_HISTORY":   "Verlauf",
+        "UI_STATS_NODATA":    "Noch keine Versuche gespeichert",
+        "UI_IMPORT_OK":       "Import erfolgreich.",
+        "UI_IMPORT_ERR":      "Import fehlgeschlagen – ungültige Datei.",
     },
 }
 
